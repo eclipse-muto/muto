@@ -1,0 +1,11 @@
+__pycache__
+*.pyc
+build
+install
+log
+.pytest_cache
+.vscode
+.DS_Store
+.idea
+*.swp
+.devcontainer
