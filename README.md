@@ -28,7 +28,7 @@ Muto transforms the traditional imperative ROS launch system into a declarative,
 
 ---
 
-> **🚀 Ready to get started?** Check out the [Quick Start with Eclipse Muto and Eclipse Symphony](./muto-quickstart.md) guide for step-by-step deployment instructions and hands-on examples.
+> **🚀 Ready to get started?** Check out the [Quick Start with Eclipse Muto and Eclipse Symphony](./docs/muto-quickstart.md) guide for step-by-step deployment instructions and hands-on examples.
 
 ## Core Architecture
 
@@ -350,4 +350,4 @@ When extending Muto:
 
 ---
 
-> **🚀 Ready to get started?** Check out the [Quick Start with Eclipse Muto and Eclipse Symphony](./muto-quickstart.md) guide for step-by-step deployment instructions and hands-on examples.
+> **🚀 Ready to get started?** Check out the [Quick Start with Eclipse Muto and Eclipse Symphony](././docs/muto-quickstart.md) guide for step-by-step deployment instructions and hands-on examples.
