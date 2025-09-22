@@ -1,0 +1,12 @@
+[submodule "src/agent"]
+	path = src/agent
+	url = https://github.com/eclipse-muto/agent.git
+[submodule "src/messages"]
+	path = src/messages
+	url = https://github.com/eclipse-muto/messages.git
+[submodule "src/core"]
+	path = src/core
+	url = https://github.com/eclipse-muto/core.git
+[submodule "src/composer"]
+	path = src/composer
+	url = https://github.com/eclipse-muto/composer.git
