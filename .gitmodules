@@ -1,6 +1,8 @@
 [submodule "src/agent"]
 	path = src/agent
 	url = https://github.com/eclipse-muto/agent.git
+	branch = symphony
+
 [submodule "src/messages"]
 	path = src/messages
 	url = https://github.com/eclipse-muto/messages.git

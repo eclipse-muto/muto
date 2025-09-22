@@ -36,7 +36,16 @@ You can also review instructions from [Setup ROS 2 with VSCode and Docker ](http
 ```bash
 
 # Clone the Muto repositories
-git clone https://github.com/eclipse-muto/muto.git
+git clone --recurse-submodules https://github.com/eclipse-muto/muto.git
+git submodule update  --recursive --remote
+
+# make sure the src/agent module is on the symphony branch if the above
+git submodule status
+
+# should return smt like:
++f35c770eade63c8590d541e0ba9fb2c81921ade0 src/agent (heads/symphony)
+ cdf7935f1e607e3e8478c0c520e5079d5c8ebc61 src/composer (heads/main)
+ 9ddf239ca84d649e5ba502a33fec76a392adedf3 src/core (heads/main)
 
 # Create workspace directories
 mkdir -p config launch .vscode .devcontainer
