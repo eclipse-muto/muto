@@ -23,6 +23,13 @@ This document outlines the coding standards and best practices followed in the C
       - [Use `asyncio` When Necessary, but Ensure Compatibility with ROS 2's Threading Model](#use-asyncio-when-necessary-but-ensure-compatibility-with-ros-2s-threading-model)
       - [Do Not Use `async` Functions as ROS 2 Callbacks](#do-not-use-async-functions-as-ros-2-callbacks)
       - [Use `asyncio.run_coroutine_threadsafe` to Schedule Coroutines in the Event Loop from Synchronous Code](#use-asynciorun_coroutine_threadsafe-to-schedule-coroutines-in-the-event-loop-from-synchronous-code)
+  - [Containerization Best Practices](#containerization-best-practices)
+    - [Container Architecture](#container-architecture)
+    - [Containerfile Standards](#containerfile-standards)
+    - [Multi-Architecture Support](#multi-architecture-support)
+    - [Container Runtime Configuration](#container-runtime-configuration)
+    - [Security Considerations](#security-considerations)
+    - [Build and Deployment](#build-and-deployment)
   - [Plugin Development Guidelines](#plugin-development-guidelines)
   - [Version Control Practices](#version-control-practices)
   - [Documentation Standards](#documentation-standards)
@@ -337,6 +344,206 @@ Remember to:
 - Use `asyncio.run_coroutine_threadsafe` to schedule asynchronous tasks safely.
 - Manage the `asyncio` event loop appropriately within your nodes.
 - Handle exceptions and be cautious of threading issues.
+
+        self.future.result()
+
+## Containerization Best Practices
+
+Eclipse Muto follows modern containerization practices to ensure reliable, portable, and efficient deployments across different architectures and environments.
+
+### Container Architecture
+
+#### Multi-Stage Builds
+- **Use multi-stage builds** to separate build dependencies from runtime dependencies
+- **Builder Stage**: Contains full development environment (compilers, build tools, dependencies)
+- **Runtime Stage**: Minimal runtime environment with only necessary dependencies
+- **Copy artifacts** from builder stage to runtime stage to minimize final image size
+
+**Example Pattern:**
+```dockerfile
+FROM ros:humble AS builder
+# Build dependencies and compilation
+RUN apt-get update && apt-get install -y build-essential cmake
+# ... build process ...
+
+FROM ros:humble AS runtime
+# Only runtime dependencies
+RUN apt-get update && apt-get install -y python3-pip
+COPY --from=builder /opt/workspace/install /opt/workspace/install
+```
+
+#### Layer Optimization
+- **Combine RUN commands** to reduce layer count and image size
+- **Order commands** by frequency of change (least to most frequent)
+- **Clean package caches** in the same RUN command that installs packages
+- **Use `.containerignore`** to exclude unnecessary files from build context
+
+### Containerfile Standards
+
+#### Base Image Selection
+- **Use official ROS images** as base (`ros:humble`) for consistency
+- **Pin specific versions** for reproducible builds
+- **Choose minimal base images** when possible while maintaining functionality
+
+#### Environment Variables
+- **Set locale environment** for consistent character encoding:
+```dockerfile
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
+```
+- **Define workspace paths** as environment variables for reusability
+- **Provide configurable runtime variables** with sensible defaults
+
+#### Package Management
+- **Update package lists** before installing packages
+- **Install packages** with `--no-install-recommends` to minimize image size
+- **Clean package caches** immediately after installation:
+```dockerfile
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    package1 package2 \
+    && rm -rf /var/lib/apt/lists/*
+```
+
+### Multi-Architecture Support
+
+#### Architecture-Aware Builds
+- **Support multiple architectures** (AMD64, ARM64) for broader deployment compatibility
+- **Use `--arch` flag** during builds to specify target architecture
+- **Create multi-arch manifests** to provide unified image references
+- **Test on target architectures** to ensure compatibility
+
+**Build Process:**
+```bash
+# Build for specific architecture
+podman build --arch amd64 -t image:tag-amd64 .
+podman build --arch arm64 -t image:tag-arm64 .
+
+# Create and push multi-arch manifest
+podman manifest create image:tag
+podman manifest add image:tag image:tag-amd64
+podman manifest add image:tag image:tag-arm64
+```
+
+#### Cross-Platform Compatibility
+- **Avoid architecture-specific dependencies** when possible
+- **Use emulation** for cross-compilation when necessary
+- **Validate functionality** across all supported architectures
+
+### Container Runtime Configuration
+
+#### Entrypoint Design
+- **Create flexible entrypoints** that handle multiple execution modes
+- **Source ROS environments** properly in entrypoint scripts
+- **Allow command override** for debugging and development
+- **Use `exec`** to ensure proper signal handling
+
+**Entrypoint Pattern:**
+```bash
+#!/usr/bin/env bash
+set -eo pipefail
+
+# Source environments
+source "/opt/ros/${ROS_DISTRO}/setup.bash"
+source "/opt/workspace/install/setup.bash"
+
+# Handle command arguments
+if [ $# -gt 0 ]; then
+  exec "$@"
+fi
+
+# Default execution
+exec ros2 launch "${LAUNCH_FILE}" ${LAUNCH_ARGS}
+```
+
+#### Configuration Management
+- **Use environment variables** for runtime configuration
+- **Provide sensible defaults** for all configurable parameters
+- **Support external configuration** through volume mounts
+- **Validate configuration** at startup when possible
+
+#### Volume Mounts and Networking
+- **Mount configuration directories** as read-only when possible
+- **Use host networking** for ROS communication when required
+- **Expose necessary ports** explicitly in container definitions
+- **Document volume requirements** and network dependencies
+
+### Security Considerations
+
+#### User Management
+- **Avoid running as root** when possible
+- **Create dedicated users** for application execution
+- **Set appropriate file permissions** for mounted volumes
+- **Use security contexts** in orchestration environments
+
+#### Dependency Management
+- **Pin package versions** for security and reproducibility
+- **Regularly update base images** to include security patches
+- **Scan images** for known vulnerabilities
+- **Minimize attack surface** by including only necessary packages
+
+#### Secrets and Configuration
+- **Never embed secrets** in container images
+- **Use external secret management** for sensitive configuration
+- **Provide configuration** through environment variables or mounted files
+- **Validate input parameters** to prevent injection attacks
+
+### Build and Deployment
+
+#### Build Automation
+- **Use consistent build commands** across environments
+- **Automate multi-arch builds** in CI/CD pipelines
+- **Tag images** with meaningful versions (git SHA, semantic versions)
+- **Include build metadata** in image labels
+
+**Metadata Labels:**
+```dockerfile
+LABEL org.opencontainers.image.title="muto" \
+      org.opencontainers.image.description="Eclipse Muto ROS orchestrator" \
+      org.opencontainers.image.source="https://github.com/eclipse-muto/muto" \
+      org.opencontainers.image.revision="$VCS_REF" \
+      org.opencontainers.image.created="$BUILD_DATE"
+```
+
+#### Registry Management
+- **Use semantic versioning** for image tags
+- **Maintain latest tags** for development and stable releases
+- **Document image variants** and their intended use cases
+- **Implement retention policies** to manage storage costs
+
+#### Testing and Validation
+- **Test container startup** and basic functionality
+- **Validate ROS node communication** within containers
+- **Test volume mounts** and configuration loading
+- **Verify multi-arch compatibility** on target platforms
+- **Include container tests** in CI/CD pipelines
+
+#### Deployment Patterns
+- **Document deployment requirements** (volumes, networks, environment variables)
+- **Provide example deployment commands** for common scenarios
+- **Support orchestration platforms** (Docker Compose, Kubernetes)
+- **Include health checks** for production deployments
+
+**Example Deployment:**
+```bash
+# Development deployment
+podman run --rm -it \
+  -e MUTO_LAUNCH_ARGS="vehicle_name:=dev-robot" \
+  -v $(pwd)/config:/work/config:ro \
+  -v $(pwd)/launch:/work/launch:ro \
+  --network host \
+  ghcr.io/eclipse-muto/muto:latest
+
+# Production deployment with custom configuration
+podman run -d \
+  --name muto-production \
+  -e MUTO_LAUNCH_ARGS="vehicle_name:=prod-robot enable_symphony:=true" \
+  -v /opt/muto/config:/work/config:ro \
+  -v /opt/muto/launch:/work/launch:ro \
+  --network host \
+  --restart unless-stopped \
+  ghcr.io/eclipse-muto/muto:stable
+```
 
 ## Plugin Development Guidelines
 
