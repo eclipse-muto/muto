@@ -28,7 +28,37 @@ Muto transforms the traditional imperative ROS launch system into a declarative,
 
 ---
 
-> **🚀 Ready to get started?** Check out the [Quick Start with Eclipse Muto and Eclipse Symphony](./docs/muto-quickstart.md) guide for step-by-step deployment instructions and hands-on examples.
+## Getting Started
+
+Choose your preferred deployment method based on your needs:
+
+### 🐳 **Container Quick Start** (Recommended)
+**Get started in minutes without compilation or complex setup**
+
+Use pre-built container images for the fastest path to running Eclipse Muto with Eclipse Symphony integration:
+
+> **[📦 Quick Start with Eclipse Muto Containers](./docs/muto-containers.md)**
+> 
+> **Perfect for:**
+> - **Rapid prototyping** and evaluation
+> - **Production deployments** with consistent environments
+> - **Multi-architecture** support (AMD64/ARM64)
+> - **Minimal setup** - no build tools required
+
+### 🔧 **Source Build Quick Start**
+**Build from source for maximum flexibility and customization**
+
+Build Eclipse Muto from source when you need deep customization or development capabilities:
+
+> **[🚀 Quick Start with Eclipse Muto and Eclipse Symphony](./docs/muto-quickstart.md)**
+> 
+> **Perfect for:**
+> - **Development** and contributing to Muto
+> - **Custom modifications** to core components
+> - **Advanced debugging** and troubleshooting
+> - **Latest features** from the development branch
+
+---
 
 ## Core Architecture
 
@@ -350,4 +380,9 @@ When extending Muto:
 
 ---
 
-> **🚀 Ready to get started?** Check out the [Quick Start with Eclipse Muto and Eclipse Symphony](././docs/muto-quickstart.md) guide for step-by-step deployment instructions and hands-on examples.
+## Ready to Get Started?
+
+Choose your preferred deployment approach:
+
+- **🐳 [Container Quick Start](./docs/muto-containers.md)** - Fast deployment with pre-built images (recommended)
+- **🔧 [Source Build Quick Start](./docs/muto-quickstart.md)** - Build from source for maximum flexibility

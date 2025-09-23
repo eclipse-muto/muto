@@ -376,4 +376,4 @@ For more details, see the SDK and provider documentation in `src/agent/agent/sym
 
 ---
 
-> **📚 Next Steps**: For comprehensive technical details about Eclipse Muto's architecture, advanced features, and development guide, see the [Eclipse Muto Overview](./muto-overview.md) document.
+> **📚 Next Steps**: For comprehensive technical details about Eclipse Muto's architecture, advanced features, and development guide, see the [Eclipse Muto Overview](../README.md) document.

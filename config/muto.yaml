@@ -27,7 +27,7 @@
     symphony_name: "hack2025-01"
     symphony_target_name: "muto-device-001"
     symphony_topic_prefix: "muto"
-    symphony_host: "192.168.0.47"
+    symphony_host: "localhost"
     symphony_port: 1883
     symphony_keep_alive: 60
     symphony_prefix: muto
@@ -35,7 +35,7 @@
     symphony_password: ""
 
     # Symphony API configuration
-    symphony_api_url: "http://192.168.0.47:8082/v1alpha2/"
+    symphony_api_url: "http://localhost:8082/v1alpha2/"
     symphony_provider_name: "providers.target.mqtt"
     symphony_broker_address: "tcp://mosquitto:1883"
     symphony_client_id: "symphony"

@@ -1,0 +1,21 @@
+# Keep Podman build context small
+.git
+.gitmodules
+.github
+build/
+install/
+log/
+.colcon/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.swp
+*.swo
+.DS_Store
+.env
+.vscode/
+.idea/
+node_modules/
+.cache/

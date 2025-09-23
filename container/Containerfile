@@ -1,0 +1,100 @@
+# syntax=docker/dockerfile:1.6
+
+# Unified Muto image (ROS 2 default: humble) - Podman Containerfile
+FROM ros:humble AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    APP_WS=/opt/muto_ws
+
+# Build toolchain and colcon/rosdep
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    locales \
+    build-essential cmake ssh curl git  rsync bc \
+    python3-pip python3-colcon-common-extensions python3-rosdep \
+    python3-jsonschema python3-requests \
+    python3-flake8 python3-autopep8\
+    python3-autopep8  \
+    ros-humble-ackermann-msgs \
+    ros-humble-image-transport \
+    ros-humble-cv-bridge \
+    ros-humble-apriltag-msgs \
+    ros-humble-tf2-ros \
+    ros-humble-sensor-msgs \
+    ros-humble-demo-nodes-cpp \ 
+    && rm -rf /var/lib/apt/lists/* && \
+    locale-gen en_US.UTF-8 && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+ENV SHELL /bin/bash
+# RUN pip3 install install setuptools==58.2.0 
+RUN pip3 install requests coverage jsons
+SHELL ["/bin/bash","-lc"]
+RUN rosdep init || true && rosdep update || true
+
+WORKDIR /work
+
+# Bring in all sources and runtime assets
+COPY src ./src
+COPY launch ./launch
+COPY config ./config
+
+# Prepare workspace and resolve deps
+RUN mkdir -p ${APP_WS}/src && rsync -a src/ ${APP_WS}/src/ && \
+    bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
+    rosdep install --from-paths ${APP_WS}/src --ignore-src -r -y"
+
+# Build all Muto packages into one merged install
+RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
+    cd ${APP_WS} && colcon build --merge-install"
+
+# Runtime image kept slim but based on ros:humble for compatibility
+FROM ros:humble AS runtime
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    APP_WS=/opt/muto_ws
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    locales \
+    build-essential cmake ssh curl git  rsync bc \
+    python3-pip python3-colcon-common-extensions python3-rosdep \
+    python3-jsonschema python3-requests \
+    python3-flake8 python3-autopep8\
+    python3-autopep8  \
+    ros-humble-ackermann-msgs \
+    ros-humble-image-transport \
+    ros-humble-cv-bridge \
+    ros-humble-apriltag-msgs \
+    ros-humble-tf2-ros \
+    ros-humble-sensor-msgs \
+    ros-humble-demo-nodes-cpp \ 
+    && rm -rf /var/lib/apt/lists/* && \
+    pip3 install paho-mqtt jsonschema
+
+# Copy built artifacts and runtime assets
+COPY --from=builder ${APP_WS}/install ${APP_WS}/install
+COPY --from=builder /work/launch /work/launch
+COPY --from=builder /work/config /work/config
+
+# Provide an entrypoint that sources environments and runs launch
+COPY container/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+WORKDIR /work
+
+# Helpful metadata
+ARG VCS_REF=""
+ARG BUILD_DATE=""
+LABEL org.opencontainers.image.title="muto" \
+      org.opencontainers.image.description="Unified Muto image (core/messages/agent/composer) for ROS 2" \
+      org.opencontainers.image.source="https://github.com/eclipse-muto/muto" \
+      org.opencontainers.image.revision="$VCS_REF" \
+      org.opencontainers.image.created="$BUILD_DATE" \
+      io.ros.distro="${ROS_DISTRO}"
+
+# Default launch file can be overridden at runtime via MUTO_LAUNCH
+ENV MUTO_LAUNCH=/work/launch/muto.launch.py \
+    MUTO_LAUNCH_ARGS=""
+
+ENTRYPOINT ["/entrypoint.sh"]
