@@ -371,7 +371,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-rqt ros-humble-rviz2 \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install paho-mqtt requests pytest-mock
+RUN pip3 install 'paho-mqtt>1.6.1' requests pytest-mock
 
 # Pre-configure ROS environment
 RUN echo "source /opt/ros/humble/setup.bash" >> /etc/bash.bashrc

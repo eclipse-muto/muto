@@ -1,18 +1,24 @@
-# Unified Muto container (ROS 2 humble)
+# Unified Muto container (parameterized ROS 2 distribution)
 
-This image bundles all Muto packages (core, messages, agent, composer) plus repo `launch/` and `config/`. It defaults to ROS 2 humble and supports multi-arch builds (linux/amd64 and linux/arm64).
+This image bundles all Muto packages (core, messages, agent, composer) plus repo `launch/` and `config/`.
+
+Default ROS 2 distribution: `humble` (Ubuntu 22.04 base).
+
+Override at build time with the `ROS_DISTRO` build arg, e.g. `ROS_DISTRO=iron` or `ROS_DISTRO=jazzy` (ensure the base image/tag exists upstream and dependency package names are valid for that distro).
 
 ## Build (multi-arch) with Podman
 
 ```bash
-# Single-arch local build
-podman build \
-  -f container/Containerfile \
-  -t muto:ros2-humble .
+# Single-arch local build (default humble)
+podman build -f container/Containerfile -t muto:ros2-humble .
+
+# Single-arch targeting a different ROS distro (example: iron)
+podman build --build-arg ROS_DISTRO=iron -f container/Containerfile -t muto:ros2-iron .
 
 # Multi-arch: build per-arch images and create a manifest
 REG=ghcr.io/eclipse-muto/muto
-TAG=ros2-humble
+ROS_DISTRO=humble   # change to iron/jazzy, etc.
+TAG=ros2-$ROS_DISTRO
 GIT_SHA=$(git rev-parse --short HEAD)
 DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
@@ -21,6 +27,7 @@ podman build \
   --arch amd64 \
   --build-arg VCS_REF=$GIT_SHA \
   --build-arg BUILD_DATE=$DATE \
+  --build-arg ROS_DISTRO=$ROS_DISTRO \
   -f container/Containerfile \
   -t $REG:${TAG}-amd64-$GIT_SHA \
   .
@@ -30,6 +37,7 @@ podman build \
   --arch arm64 \
   --build-arg VCS_REF=$GIT_SHA \
   --build-arg BUILD_DATE=$DATE \
+  --build-arg ROS_DISTRO=$ROS_DISTRO \
   -f container/Containerfile \
   -t $REG:${TAG}-arm64-$GIT_SHA \
   .
@@ -67,5 +75,5 @@ podman run --rm -it \
 - Mount host `config/` and `launch/` for development or override at build time to bake them in.
 
 ## Notes
-- Base image: `ros:humble` (Ubuntu 22.04)
+- Base image: `ros:${ROS_DISTRO}` (default `humble`, Ubuntu 22.04)
 - GPU: With Podman, prefer using `--hooks-dir`/`nvidia-container-toolkit` or rootful Podman with Nvidia support on your host. Alternatively, build a CUDA base variant and run with `--device` mappings.

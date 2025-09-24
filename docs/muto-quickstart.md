@@ -150,6 +150,10 @@ rosdep install --from-paths src --ignore-src -r -y
 
 # Source ROS environment
 source /opt/ros/humble/setup.bash
+
+# Build the workspace
+colcon build --symlink-install
+
 source install/setup.bash
 
 # Launch Muto with Symphony integration
