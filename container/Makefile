@@ -36,7 +36,7 @@ push-arm64:
 	podman push $(REG):$(TAG)-arm64-$(VERSION)
 
 manifest:
-	podman manifest create $(REG):$(TAG)-$(VERSION) \
+	podman manifest create --amend $(REG):$(TAG)-$(VERSION) \
 	  $(REG):$(TAG)-amd64-$(VERSION) \
 	  $(REG):$(TAG)-arm64-$(VERSION)
 

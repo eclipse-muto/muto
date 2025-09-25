@@ -35,6 +35,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && locale-gen en_US.UTF-8 \
  && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 ENV SHELL /bin/bash
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
+
 # RUN pip3 install install setuptools==58.2.0 
 # RUN pip3 "paho-mqtt>2.0.0" paho-mqtt --break-system-packages
 
@@ -89,6 +91,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-sensor-msgs \
     ros-${ROS_DISTRO}-demo-nodes-cpp \
  && rm -rf /var/lib/apt/lists/* 
+
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
 # Install newer paho-mqtt via pip (Ubuntu repo version may be 1.6.1)
 RUN if [ "${ROS_DISTRO}" = "humble" ]; then \
