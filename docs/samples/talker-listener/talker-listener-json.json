@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "name": "Muto Simple Talker-Listener Stack",
+    "description": "A simple talker-listener stack example using demo_nodes_cpp package.",
+    "content_type": "stack/json"
+  },
+  "launch": {
+      "node": [
+        {
+          "name": "talker",
+          "pkg": "demo_nodes_cpp",
+          "exec": "talker"
+        },
+        {
+          "name": "listener",
+          "pkg": "demo_nodes_cpp",
+          "exec": "listener"
+        }
+      ]
+  }
+}

@@ -142,11 +142,11 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log_level]
     )
 
-    node_native_plugin = Node(
+    node_provision_plugin = Node(
         namespace=muto_namespace,
-        name="native_plugin",
+        name="provision_plugin",
         package="composer",
-        executable="native_plugin",
+        executable="provision_plugin",
         output="screen",
         parameters=[
             muto_config_file,
@@ -200,7 +200,7 @@ def generate_launch_description():
     ld.add_action(node_twin)
     ld.add_action(node_composer)
     ld.add_action(node_compose_plugin)
-    ld.add_action(node_native_plugin)
+    ld.add_action(node_provision_plugin)
     ld.add_action(node_launch_plugin)
     ld.add_action(symphony_provider)
 

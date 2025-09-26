@@ -39,14 +39,20 @@ fi
 # Use --arg to safely inject shell variable
 SOLUTION_DATA=$(jq --arg name "$INSTANCE_NAME" '(.metadata //= {}) | .metadata.name = $name' "$JSON_FILE")
 
+# DELETE THE INSTANCE AND SHOW THE RESULT OF THE DELETE as SUCCESSFUL OR NOT
 
-HTTP_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}"  -X POST \
+echo ""
+echo "---"
+echo "Deleting instance with metadata.name=$INSTANCE_NAME"
+HTTP_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer $TOKEN" \
-    -d "$SOLUTION_DATA" \
     "${SYMPHONY_API_URL}instances/${INSTANCE_NAME}")
+
 if [ "$HTTP_RESPONSE" -eq 200 ] || [ "$HTTP_RESPONSE" -eq 204 ]; then
-    echo "Instance '${INSTANCE_NAME}' created successfully."
+    echo "Instance '${INSTANCE_NAME}' deleted successfully."
 else
-    echo "Failed to create instance '${INSTANCE_NAME}'. HTTP status: $HTTP_RESPONSE"
+    echo "Failed to delete instance '${INSTANCE_NAME}'. HTTP status: $HTTP_RESPONSE"
+    exit 3
 fi
+
