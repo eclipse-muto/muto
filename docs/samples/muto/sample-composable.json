@@ -1,0 +1,26 @@
+{
+  "name": "Muto Simple Composable Client-Server Stack",
+  "context": "eteration_office",
+  "stackId": "org.eclipse.muto.sandbox:composable_client_server",
+  "composable": [
+    {
+      "name": "muto_demo_container",
+      "namespace": "",
+      "package": "rclcpp_components",
+      "executable": "component_container",
+      "node": [
+        {
+          "pkg": "composition",
+          "plugin": "composition::Server",
+          "name": "server"
+        },
+        {
+          "pkg": "composition",
+          "plugin": "composition::Client",
+          "name": "client"
+        }
+      ]
+    }
+  ],
+  "node": []
+}
