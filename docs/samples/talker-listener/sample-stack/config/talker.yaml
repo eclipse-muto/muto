@@ -1,0 +1,4 @@
+/talker:
+  ros__parameters:
+    publish_frequency: 1.0
+    message: "SDV Hackathon Chapter III!"

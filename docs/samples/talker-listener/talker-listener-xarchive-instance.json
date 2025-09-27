@@ -1,0 +1,14 @@
+{
+    "metadata": {
+        "name": "talker-listener-xarchive-instance",
+        "labels": {
+            "muto": "demo"
+        }
+    },
+    "spec": {
+        "solution": "talker-listener-xarchive:1",
+        "target": {
+            "name": "test-robot-debug"
+        }
+    }
+}

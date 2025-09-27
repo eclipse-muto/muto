@@ -58,9 +58,9 @@ encode_base64() {
         base64 -i "$file" 2>/dev/null || base64 < "$file" 2>/dev/null
     elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ -n "$WSL_DISTRO_NAME" ]] || [[ -n "$IS_WSL" ]] || [[ "$(uname -r)" == *Microsoft* ]] || [[ "$(uname -r)" == *microsoft* ]]; then
         # WSL/Windows environments - try different approaches
-        if base64 -w 0 "$file" 2>/dev/null; then
+        if command -v base64 >/dev/null 2>&1 && base64 -w 0 "$file" >/dev/null 2>&1; then
             base64 -w 0 "$file"
-        elif base64 < "$file" 2>/dev/null; then
+        elif command -v base64 >/dev/null 2>&1 && base64 < "$file" >/dev/null 2>&1; then
             base64 < "$file" | tr -d '\n'
         else
             # Fallback for older WSL versions
@@ -68,7 +68,7 @@ encode_base64() {
         fi
     else
         # Linux/Unix (GNU base64)
-        if base64 -w 0 "$file" 2>/dev/null; then
+        if command -v base64 >/dev/null 2>&1 && base64 -w 0 "$file" >/dev/null 2>&1; then
             base64 -w 0 "$file"
         else
             # Fallback for systems without -w option
@@ -80,7 +80,6 @@ encode_base64() {
 # Base64 encode the contents of the JSON file
 echo "Encoding stack data to base64..."
 STACK_DATA_BASE64=$(encode_base64 "$JSON_FILE")
-
 if [ -z "$STACK_DATA_BASE64" ]; then
     echo "Error: Failed to base64 encode the JSON file"
     exit 1

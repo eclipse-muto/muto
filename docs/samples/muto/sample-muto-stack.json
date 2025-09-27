@@ -1,0 +1,91 @@
+{
+  "name": "F1tenth Multiagent Gym",
+  "context": "eteration_office",
+  "stackId": "org.eclipse.muto.sandbox:f1tenth-multiagent-gym.launch",
+  "stack": [
+    {
+      "thingId": "org.eclipse.muto.sandbox:racecar1.launch"
+    },
+    {
+      "thingId": "org.eclipse.muto.sandbox:racecar2.launch"
+    },
+    {
+      "thingId": "org.eclipse.muto.sandbox:racecar3.launch"
+    }
+  ],
+  "arg": [
+    {
+      "name": "map",
+      "value": "$(find f1tenth_gym_ros)/maps/Spielberg_map.yaml"
+    }
+  ],
+  "param": [],
+  "node": [
+    {
+      "name": "map_server",
+      "pkg": "nav2_map_server",
+      "exec": "map_server",
+      "param": [
+        {
+          "name": "yaml_filename",
+          "value": "$(arg map)"
+        },
+        {
+          "name": "topic",
+          "value": "map"
+        },
+        {
+          "name": "frame_id",
+          "value": "map"
+        },
+        {
+          "name": "output",
+          "value": "screen"
+        },
+        {
+          "name": "use_sim_time",
+          "value": "True"
+        }
+      ]
+    },
+    {
+      "name": "gym_bridge",
+      "pkg": "f1tenth_gym_ros",
+      "exec": "gym_bridge",
+      "param": [
+        {
+          "from": "$(find f1tenth_gym_ros)/config/sim.yaml"
+        }
+      ]
+    },
+    {
+      "pkg": "rviz2",
+      "name": "rviz",
+      "exec": "rviz2",
+      "args": "-d $(find f1tenth_gym_ros)/launch/gym_bridge.rviz",
+      "output": "screen"
+    },
+    {
+      "pkg": "nav2_lifecycle_manager",
+      "exec": "lifecycle_manager",
+      "name": "lifecycle_manager_localization",
+      "output": "screen",
+      "param": [
+        {
+          "name": "use_sim_time",
+          "value": "True"
+        },
+        {
+          "name": "autostart",
+          "value": "True"
+        },
+        {
+          "name": "node_names",
+          "value": [
+            "map_server"
+          ]
+        }
+      ]
+    }
+  ]
+}

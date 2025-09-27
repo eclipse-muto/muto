@@ -357,6 +357,9 @@ colcon test
 
 # Run specific package tests
 colcon test --packages-select agent composer core
+
+#Running a specific test method
+python3 -m pytest src/composer/test/test_muto_composer.py::TestMutoComposer::test_parse_payload_archive_format -v
 ```
 
 ### Contributing
