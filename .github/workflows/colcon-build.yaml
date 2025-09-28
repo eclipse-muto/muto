@@ -13,6 +13,7 @@ jobs:
       - run: |
           ls -lart
           apt-get update -y
+          git config --global --add safe.directory /__w/muto/muto
           git submodule update --init --recursive
           apt-get install python3-pip -y
           pip3 install setuptools==58.2.0
