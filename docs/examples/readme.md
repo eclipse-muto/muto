@@ -340,10 +340,10 @@ Share your own examples and learn from the community:
 
 🚀 **Start with Examples**: Choose your first example from the [samples directory](./samples/)
 
-📚 **Learn More**: Dive deeper with the [User Guide](../USER_GUIDE/README.md)
+📚 **Learn More**: Dive deeper with the [User Guide](../user_guide/readme.md)
 
-🛠️ **Develop**: Create your own solutions with the [Developer Guide](../DEVELOPER_GUIDE/README.md)
+🛠️ **Develop**: Create your own solutions with the [Developer Guide](../developer_guide/readme.md)
 
-🔍 **Reference**: Technical details in [Reference Documentation](../REFERENCE/README.md)
+🔍 **Reference**: Technical details in [Reference Documentation](../reference/readme.md)
 
 **Happy exploring!** These examples will give you hands-on experience with Eclipse Muto's powerful orchestration capabilities.

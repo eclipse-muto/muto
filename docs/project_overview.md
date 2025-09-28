@@ -270,7 +270,7 @@ The **Messages** component defines all Muto ROS message types and service interf
 
 ## Next Steps
 
-- **[User Guide](./USER_GUIDE/README.md)**: Learn how to deploy and use Eclipse Muto
-- **[Developer Guide](./DEVELOPER_GUIDE/README.md)**: Contribute to Eclipse Muto development
-- **[Examples](./EXAMPLES/README.md)**: Explore sample implementations and tutorials
-- **[Reference Documentation](./REFERENCE/README.md)**: Deep-dive technical documentation
+- **[User Guide](./user_guide/readme.md)**: Learn how to deploy and use Eclipse Muto
+- **[Developer Guide](./developer_guide/readme.md)**: Contribute to Eclipse Muto development
+- **[Examples](./examples/readme.md)**: Explore sample implementations and tutorials
+- **[Reference Documentation](./reference/readme.md)**: Deep-dive technical documentation

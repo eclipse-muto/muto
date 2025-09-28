@@ -61,7 +61,7 @@ source install/setup.bash
 cd ~/muto_ws/src
 
 # Clone the official repository
-git clone https://github.com/eclipse-muto/muto.git
+git clone --recurse-submodules  https://github.com/eclipse-muto/muto.git
 
 # Alternative: Clone your fork for development
 # git clone https://github.com/YOUR_USERNAME/muto.git

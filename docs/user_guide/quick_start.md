@@ -54,7 +54,7 @@ This guide walks you through setting up and running Eclipse Muto containers with
 First, start the Symphony server and MQTT broker infrastructure using the provided Docker Compose configuration:
 
 ```bash
-git clone https://github.com/eclipse-muto/muto.git
+git clone --recurse-submodules  https://github.com/eclipse-muto/muto.git
 # Navigate to the Symphony directory
 cd docs/samples/symphony/
 
@@ -79,7 +79,7 @@ curl http://localhost:8082/v1alpha2/greetings
 #### Clone Muto Repository for Configuration Files
 
 ```bash
-git clone https://github.com/eclipse-muto/muto.git
+git clone --recurse-submodules  https://github.com/eclipse-muto/muto.git
 # Navigate to the Symphony directory
 cd muto/
 
