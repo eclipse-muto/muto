@@ -1,6 +1,6 @@
 # Eclipse Muto
 
-<img src="./docs/images/muto.png" alt="Eclipse Muto Modules" title="Eclipse Muto Modules" width="30%" style="display: block; margin: auto; width: 30%;">
+<img src="./images/muto.png" alt="Eclipse Muto Modules" title="Eclipse Muto Modules" width="30%" style="display: block; margin: auto; width: 30%;">
 
 ## Overview
 
@@ -54,16 +54,16 @@ All folder under the src/ folder are [GIT modules](https://git-scm.com/docs/gitm
 
 
 ### 🚀 Getting Started
-- **[🐳 Quick Start](./docs/user_guide/quick_start.md)** - Fast deployment with pre-built images (recommended)
-- **[🔧 Source Build Quick Start](./docs/developer_guide/building_from_source.md)** - Build from source for maximum flexibility, including setup for  Containerized development environment
+- **[🐳 Quick Start](./user_guide/quick_start.md)** - Fast deployment with pre-built images (recommended)
+- **[🔧 Source Build Quick Start](./developer_guide/building_from_source.md)** - Build from source for maximum flexibility, including setup for  Containerized development environment
 
 ### 📚 Documentation
-- **[📖 User Guide](./docs/user_guide/readme.md)** - User documentation on how to configure and run Muto
-- **[🔧 Developer Guide](./docs/developer_guide/readme.md)** - Development and contribution guide
-- **[📚 Reference Documentation](./docs/reference/readme.md)** - Technical reference for all components
+- **[📖 User Guide](./user_guide/readme.md)** - User documentation on how to configure and run Muto
+- **[🔧 Developer Guide](./developer_guide/readme.md)** - Development and contribution guide
+- **[📚 Reference Documentation](./reference/readme.md)** - Technical reference for all components
 
 ### 📝 Examples
-- **[🎯 Examples Overview](./docs/examples/readme.md)** - Muto examples and demonstration tutorials
+- **[🎯 Examples Overview](./examples/readme.md)** - Muto examples and demonstration tutorials
 
 ## Target Use Cases
 
@@ -75,11 +75,11 @@ All folder under the src/ folder are [GIT modules](https://git-scm.com/docs/gitm
 
 ## License
 
-Eclipse Muto is licensed under the [Eclipse Public License 2.0](LICENSE).
+Eclipse Muto is licensed under the [Eclipse Public License 2.0](../LICENSE).
 
 ## Contributing
 
-We welcome contributions to Eclipse Muto! Please see our [Developer Guide](./docs/developer_guide/readme.md) for detailed information on how to contribute, including:
+We welcome contributions to Eclipse Muto! Please see our [Developer Guide](./developer_guide/readme.md) for detailed information on how to contribute, including:
 
 ## Community
 

@@ -1,8 +1,18 @@
-# Quick Start with Eclipse Muto Containers and Eclipse Symphony
+# Eclipse Muto - Quick Start with Eclipse Muto Containers and Eclipse Symphony
 
-## Introduction
+This guide shows you how to deploy Eclipse Muto using pre-built container images for the fastest and most consistent deployment experience. You will set up and deploy Eclipse Muto using pre-built container images with Eclipse Symphony integration for distributed ROS orchestration. This approach eliminates the need to build Muto from source and provides a fast path to get started with containerized deployment.
 
-This guide demonstrates how to set up and deploy Eclipse Muto using pre-built container images with Eclipse Symphony integration for distributed ROS orchestration. This approach eliminates the need to build Muto from source and provides a fast path to get started with containerized deployment.
+## Why Choose Container Deployment?
+
+Container deployment offers several key advantages:
+
+- **⚡ Fast Setup**: Pre-built images eliminate compilation time (5-10 minutes vs 30+ minutes)
+- **🔄 Consistent Environment**: Reproducible deployments across different systems
+- **🏗️ Multi-Architecture**: Native support for AMD64 and ARM64 architectures  
+- **📦 Self-Contained**: All dependencies included, minimal host requirements
+- **🚀 Production Ready**: Optimized images for production deployments
+- **🎯 Easy Scaling**: Simple horizontal scaling for fleet deployments
+
 
 **What You'll Accomplish:**
 - Deploy Eclipse Muto using pre-built container images
@@ -32,7 +42,7 @@ ROS 2 Nodes & Applications
 ## Prerequisites
 
 - **Container Runtime**: Podman or Docker with multi-architecture support
-- **Eclipse Symphony Setup**: [Eclipse Symphony Quick Start](https://github.com/eclipse-symphony/symphony/blob/main/docs/README.md) or use the docker-compose setup from [Eclipse Symphony Docker Compose](https://github.com/Eclipse-SDV-Hackathon-Chapter-Three/challenge-mission-update-possible/blob/main/symphony/README.md)
+- **Eclipse Symphony Setup**: [Eclipse Symphony Quick Start](https://github.com/eclipse-symphony/symphony/blob/main/docs/README.md) or use the docker-compose setup from [Eclipse Symphony Docker Compose](../../docs/samples/symphony/docker-compose.yaml)
 - **Network Access**: Host networking for ROS communication
 
 ## Getting Started
@@ -44,9 +54,9 @@ This guide walks you through setting up and running Eclipse Muto containers with
 First, start the Symphony server and MQTT broker infrastructure using the provided Docker Compose configuration:
 
 ```bash
-git clone git@github.com:Eclipse-SDV-Hackathon-Chapter-Three/challenge-mission-update-possible.git
+git clone https://github.com/eclipse-muto/muto.git
 # Navigate to the Symphony directory
-cd challenge-mission-update-possible/symphony
+cd docs/samples/symphony/
 
 # Start Symphony API, Portal, and Mosquitto MQTT broker
 docker compose up -d
@@ -67,10 +77,12 @@ curl http://localhost:8082/v1alpha2/greetings
 ### 2. Prepare Muto Configuration
 
 #### Clone Muto Repository for Configuration Files
+
 ```bash
-# Clone the repository to get configuration and launch files
 git clone https://github.com/eclipse-muto/muto.git
-cd muto
+# Navigate to the Symphony directory
+cd muto/
+
 ```
 
 #### Main Configuration (`config/muto.yaml`)
@@ -200,98 +212,8 @@ curl http://localhost:8082/v1alpha2/greetings
 mosquitto_pub -h localhost -p 1883 -t "test/topic" -m "test message"
 ```
 
-### 5. Deploy ROS Stacks via Symphony
 
-Symphony uses a three-tier orchestration model: **Target** → **Solution** → **Instance**
-
-This hierarchical approach separates device registration, software package definition, and deployment requests into distinct, manageable components.
-
-#### Target Registration (Automatic)
-
-**Target**: Represents the deployment destination (device/robot) with its capabilities, components, and communication topology.
-
-- **Automatic Registration**: The Target is **automatically registered** when the Muto agent starts up
-- **Target Name**: Uses the same name as the vehicle (configured in `config/muto.yaml` as the `name` parameter)
-- **Device Identity**: Targets represent physical or logical devices that can execute solutions
-- **Capabilities**: Defines what components and services the device can provide
-
-> **📝 Target Reference**: See [`samples/symphony/target.json`](samples/symphony/target.json) for the target definition structure that gets automatically registered.
-
-#### Solution Definition (via Symphony API)
-
-**Solution**: Defines a versioned software package containing ROS stack definitions as base64-encoded payloads.
-
-- **Stack Payload**: Solutions contain the ROS stack definition as a **base64-encoded payload**
-- **API Creation**: Solutions are defined using the Symphony API rather than configuration files
-- **Versioning**: Multiple solution versions can coexist for different deployment scenarios
-- **Component Packaging**: Encapsulates the "what" - the software stack definition that can be deployed
-
-**Creating Solutions**:
-```bash
-# Example: Create a solution using the provided script
-cd docs/samples/config
-./define-solution.sh talker-listener.json
-```
-
-> **📝 Solution Script**: See [`docs/samples/symphony/define-solution.sh`](../docs/samples/symphony/define-solution.sh) for an example of how solutions can be created via the Symphony API with base64-encoded stack data.
-
-#### Instance Deployment (via Symphony API)  
-
-**Instance**: Defines a deployment request that links a specific Solution version to a specific Target.
-
-- **Deployment Binding**: Creates the logical connection between software (Solution) and hardware (Target)  
-- **API Creation**: Instances are also defined using the Symphony API
-- **Runtime Deployment**: Represents the "where and when" - actual deployments of solutions to targets
-
-**Creating Instances**:
-```bash
-# Example: Create an instance using the provided script  
-cd docs/samples/config
-./define-instance.sh
-```
-
-> **📝 Instance Script**: See [`docs/samples/symphony/define-instance.sh`](../docs/samples/symphony/define-instance.sh) for an example of how instances can be created via the Symphony API.
-
-**Target-Solution-Instance Benefits**:
-- **Reusability**: Solutions can be deployed to multiple targets
-- **Versioning**: Multiple solution versions can coexist  
-- **Flexibility**: Different solution versions can be deployed to different targets
-- **Traceability**: Clear deployment history and relationships
-- **Separation of Concerns**: Device capabilities, software packages, and deployments are managed independently
-
-#### Complete Deployment Workflow
-
-The typical deployment workflow using the provided scripts:
-
-1. **Start Muto Container**: Target gets automatically registered with Symphony
-2. **Create Solution**: Use the solution script to package your ROS stack
-3. **Deploy Instance**: Use the instance script to deploy the solution to the target
-
-```bash
-# Step 1: Start Muto container (Target auto-registers)
-podman run --rm -it \
-  -e MUTO_LAUNCH=/work/launch/muto.launch.py \
-  -e MUTO_LAUNCH_ARGS="vehicle_namespace:=org.eclipse.muto.test vehicle_name:=test-robot-debug enable_symphony:=true" \
-  -v $(pwd)/launch:/work/launch:ro \
-  -v $(pwd)/config:/work/config:ro \
-  --network host \
-  ghcr.io/eclipse-muto/muto:ros2-humble
-
-# Step 2: Create solution (in another terminal)
-cd src/agent/config
-./define-solution.sh talker-listener.json
-
-# Step 3: Deploy instance  
-./define-instance.sh
-```
-
-> **📁 Reference Files**: 
-> - **Stack Definition**: [`docs/samples/symphony/talker-listener.json`](../docs/samples/symphony/talker-listener.json) - ROS node collection to be deployed
-> - **Solution Script**: [`docs/samples/symphony/define-solution.sh`](../docs/samples/symphony/define-solution.sh) - Creates Symphony solution via API
-> - **Instance Script**: [`docs/samples/symphony/instance.json`](../docs/samples/symphony/instance.json) - Instance definition
-> - **Instance Script**: [`docs/samples/symphony/define-instance.sh`](../docs/samples/symphony/define-instance.sh) - Deploys instance via API
-
-### 6. System Monitoring & Troubleshooting
+### 5. System Monitoring & Troubleshooting
 
 #### Container Management
 
@@ -321,94 +243,9 @@ curl -H "Content-Type: application/json" \
      http://localhost:8082/v1alpha2/targets
 ```
 
-#### Common Container Issues
-
-- **Port conflicts**: Ensure ports 1883, 3000, 8082 are not in use by other services
-- **Volume mount errors**: Verify that `$(pwd)/config` and `$(pwd)/launch` directories exist
-- **Network connectivity**: Use `--network host` for ROS communication
-- **Container startup failures**: Check that the container image is available locally
-
-#### Debugging Container Issues
-
-```bash
-# Run container with shell access for debugging
-podman run --rm -it \
-  -v $(pwd)/launch:/work/launch:ro \
-  -v $(pwd)/config:/work/config:ro \
-  --network host \
-  ghcr.io/eclipse-muto/muto:ros2-humble \
-  /bin/bash
-
-# Inside container, you can inspect the environment:
-# ls -la /work/
-# cat /work/config/muto.yaml  # View mounted configuration
-# ros2 node list
-```
-
-### 7. Advanced Container Configuration
-
-#### Using Different Container Tags
-
-```bash
-# Use specific architecture
-podman run --rm -it --arch arm64 \
-  -e MUTO_LAUNCH_ARGS="vehicle_namespace:=org.eclipse.muto.test vehicle_name:=test-robot-debug enable_symphony:=true" \
-  -v $(pwd)/launch:/work/launch:ro \
-  -v $(pwd)/config:/work/config:ro \
-  --network host \
-  ghcr.io/eclipse-muto/muto:ros2-humble
-
-# Use version-specific tag
-podman run --rm -it \
-  -e MUTO_LAUNCH_ARGS="vehicle_namespace:=org.eclipse.muto.test vehicle_name:=test-robot-debug enable_symphony:=true" \
-  -v $(pwd)/launch:/work/launch:ro \
-  -v $(pwd)/config:/work/config:ro \
-  --network host \
-  ghcr.io/eclipse-muto/muto:ros2-humble-ubuntu22.04-cpu-2c9bac4-fixed3
-```
-
-#### Custom Launch Files
-
-```bash
-# Create custom launch file
-mkdir -p ./my-launch
-cp launch/muto.launch.py ./my-launch/custom-muto.launch.py
-
-# Edit custom launch file as needed
-# ... make your modifications ...
-
-# Use custom launch file
-podman run --rm -it \
-  -e MUTO_LAUNCH=/work/launch/custom-muto.launch.py \
-  -e MUTO_LAUNCH_ARGS="vehicle_namespace:=org.eclipse.muto.test vehicle_name:=test-robot-debug enable_symphony:=true" \
-  -v $(pwd)/my-launch:/work/launch:ro \
-  -v $(pwd)/config:/work/config:ro \
-  --network host \
-  ghcr.io/eclipse-muto/muto:ros2-humble
-```
-
-#### Running in Background
-
-```bash
-# Run container in background (detached mode)
-podman run -d \
-  --name muto-system \
-  -e MUTO_LAUNCH=/work/launch/muto.launch.py \
-  -e MUTO_LAUNCH_ARGS="vehicle_namespace:=org.eclipse.muto.test vehicle_name:=test-robot-debug enable_symphony:=true" \
-  -v $(pwd)/launch:/work/launch:ro \
-  -v $(pwd)/config:/work/config:ro \
-  --network host \
-  ghcr.io/eclipse-muto/muto:ros2-humble
-
-# Monitor logs
-podman logs -f muto-system
-
-# Stop background container
-podman stop muto-system
-podman rm muto-system
-```
 
 
 ---
 
-> **📚 Next Steps**: For comprehensive technical details about Eclipse Muto's architecture, advanced features, and development guide, see the [Eclipse Muto Overview](../README.md) document.
+ **📚 Next Steps**: For comprehensive technical details about Eclipse Muto's architecture, advanced features, and development guide, see the [Eclipse Muto Overview](../project_overview.md) document.
+
