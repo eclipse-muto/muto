@@ -11,9 +11,7 @@ jobs:
         uses: actions/checkout@v3
 
       - run: |
-          mkdir -p $(pwd)/tmp/muto/
-          ln -s $(pwd) $(pwd)/tmp/muto
-          cd $(pwd)/tmp/muto
+          ls -lart
           apt-get update -y
           apt-get install python3-pip -y
           pip3 install setuptools==58.2.0
