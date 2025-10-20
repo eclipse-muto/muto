@@ -33,8 +33,8 @@
     - [10.1 Layered Architecture](#101-layered-architecture)
     - [10.2 Stack Lifecycle State Machine](#102-stack-lifecycle-state-machine)
     - [10.3 Command Flow Start](#103-command-flow-start)
-    - [10.5 Error Taxonomy](#105-error-taxonomy)
-    - [10.6 Conformance Surface](#106-conformance-surface)
+    - [10.4 Error Taxonomy](#104-error-taxonomy)
+    - [10.5 Conformance Surface](#105-conformance-surface)
 
 ---
 
@@ -393,7 +393,7 @@ sequenceDiagram
   TR-->>CP: telemetry stream
 ```
 
-### 10.5 Error Taxonomy
+### 10.4 Error Taxonomy
 
 ```mermaid
 flowchart LR
@@ -428,7 +428,7 @@ flowchart LR
   r --- S9
 ```
 
-### 10.6 Conformance Surface
+### 10.5 Conformance Surface
 
 ```mermaid
 mindmap
