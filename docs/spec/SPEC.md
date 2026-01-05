@@ -30,14 +30,6 @@ what the environment must provide.
 - The Agent must support MQTT and HTTP communication, with an extensible path for additional protocols. Source: `docs/readme.md`, `docs/reference/agent/readme.md`
 - Inter-component communication must use ROS 2 messages and services defined in the Messages package (for example, MutoAction, StackManifest, and plugin services). Source: `docs/reference/messages/readme.md`
 
-### Dashboard and API requirements
-- The backend must expose the API contract defined in `docs/api/openapi.yaml`, including read and write endpoints for fleet, rollout, release, desired state, and report data. Source: `docs/api/openapi.yaml`, `docs/frontend/backend_responsibilities.md`
-- The backend must provide pagination, filtering, search, stable response envelopes, and idempotent writes. Source: `docs/frontend/backend_responsibilities.md`
-- The system must implement rollout statuses, canary and wave stages, and gates as documented. Source: `docs/frontend/rollouts.md`
-- Vehicle status codes and reason codes must align with the documented list. Source: `docs/frontend/vehicle_status.md`
-- Vehicle timeline events must include the documented event types. Source: `docs/frontend/vehicle_events.md`
-- Audit log actions must include documented actions for deployments and rollbacks. Source: `docs/frontend/audit_log.md`
-
 ## Deployment and environment requirements
 - Supported development platforms are Ubuntu 20.04 and 22.04 with ROS 2 installed. Source: `docs/developer_guide/readme.md`, `docs/developer_guide/building_from_source.md`
 - Running examples require ROS 2 Humble or later. Source: `docs/user_guide/running_examples.md`
