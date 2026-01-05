@@ -38,11 +38,7 @@ what the environment must provide.
 ## Quality, security, and operational requirements
 - Development must follow ROS 2 best practices, Python style guidelines, and include comprehensive type hints and documentation. Source: `docs/developer_guide/readme.md`
 - The test strategy must use `colcon test` with an 80 percent coverage target and independent tests. Source: `docs/developer_guide/readme.md`
-- The backend must emit audit logs for write actions and provide observability (structured logs, metrics, tracing, health checks). Source: `docs/frontend/backend_responsibilities.md`
 - Security must include input validation and secure communication patterns with authentication and encryption support. Source: `docs/developer_guide/readme.md`, `docs/reference/agent/readme.md`
-
-## Constraints and non-goals
-- The system must avoid direct remote command execution and rely on declarative desired state instead. Source: `docs/frontend/backend_responsibilities.md`
 
 ## Open items to confirm
 - Python version baseline is listed as 3.10+ for building from source, while the developer guide mentions 3.8+. Confirm the official minimum. Source: `docs/developer_guide/building_from_source.md`, `docs/developer_guide/readme.md`
