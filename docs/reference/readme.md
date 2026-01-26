@@ -89,7 +89,7 @@ Eclipse Muto follows a modular architecture where components communicate via ROS
 ### Message Types Summary
 
 #### Core Messages
-- `muto_msgs/MutoAction` - Stack deployment commands
+- `muto_msgs/MutoAction` - stack orchestration commands
 - `muto_msgs/ComposerResponse` - Deployment status and results
 - `muto_msgs/AgentStatus` - Agent health and capability information
 - `muto_msgs/StackDefinition` - Complete stack configuration structure
