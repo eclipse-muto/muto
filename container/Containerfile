@@ -56,7 +56,7 @@ COPY launch ./launch
 COPY config ./config
 
 # Prepare workspace and resolve deps
-RUN mkdir -p ${APP_WS}/src && rsync -a src/ ${APP_WS}/src/ && \
+RUN mkdir -p ${APP_WS}/src && rsync -a --exclude='build' --exclude='install' --exclude='log' src/ ${APP_WS}/src/ && \
     bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
     rosdep install --from-paths ${APP_WS}/src --ignore-src -r -y"
 
