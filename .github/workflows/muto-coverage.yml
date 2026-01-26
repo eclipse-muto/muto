@@ -1,0 +1,67 @@
+name: Eclipse Muto Test Coverage
+
+on:
+  workflow_call:
+    outputs:
+      test_coverage_url:
+        value: ${{ jobs.build.outputs.test_coverage_url }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: osrf/ros:humble-desktop
+    outputs:
+      test_coverage_url: ${{ steps.unittest_coverage_report_xml.outputs.artifact-url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Setup workspace
+        run: |
+          mkdir -p /tmp/ws/src
+          ln -s $(pwd) /tmp/ws/src/muto
+          cd /tmp/ws
+          . /opt/ros/humble/setup.sh
+        shell: bash
+
+      - name: Install dependencies
+        run: |
+          cd /tmp/ws
+          apt-get update -y
+          apt-get install -y python3-pip \
+            python3-flake8 \
+            python3-autopep8 \
+            bc
+          pip3 install setuptools==58.2.0
+          pip3 install requests coverage
+          pip3 install src/muto/src/agent/symphony-sdk-python/
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
+        shell: bash
+
+      - name: Build
+        shell: bash
+        run: |
+          cd /tmp/ws
+          source /opt/ros/humble/setup.bash
+          echo "CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH"
+          colcon build --symlink-install
+
+      - name: Test
+        shell: bash
+        run: |
+          cd /tmp/ws
+          source /opt/ros/humble/setup.sh
+          source install/setup.sh
+          cd src/muto/src/composer
+          python3 -m coverage run --source=composer -m unittest discover -s test -p "test_*.py"
+          python3 -m coverage xml
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        id: unittest_coverage_report_xml
+        with:
+          name: test-coverage-xml
+          path: /tmp/ws/src/muto/src/composer/coverage.xml
