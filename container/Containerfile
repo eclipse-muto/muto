@@ -7,7 +7,7 @@
 # Declare ROS_DISTRO once (available to all stages) with a default of humble
 ARG ROS_DISTRO=humble
 
-FROM ros:${ROS_DISTRO} AS builder
+FROM docker.io/library/ros:${ROS_DISTRO} AS builder
 ARG ROS_DISTRO
 ENV ROS_DISTRO=${ROS_DISTRO}
 
@@ -60,6 +60,9 @@ RUN mkdir -p ${APP_WS}/src && rsync -a --exclude='build' --exclude='install' --e
     bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
     rosdep install --from-paths ${APP_WS}/src --ignore-src -r -y"
 
+# Install symphony-sdk-python (required by agent)
+RUN pip3 install --no-cache-dir -e ${APP_WS}/src/agent/symphony-sdk-python
+
 # Build all Muto packages into one merged install
 RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
     cd ${APP_WS} && rosdep install --from-paths src --ignore-src -r -y &&  colcon build --merge-install && \
@@ -67,7 +70,7 @@ RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
     colcon test --merge-install  --event-handlers console_direct+"
 
 ## Runtime image kept slim but based on the selected ROS distribution
-FROM ros:${ROS_DISTRO} AS runtime
+FROM docker.io/library/ros:${ROS_DISTRO} AS runtime
 ARG ROS_DISTRO
 ENV ROS_DISTRO=${ROS_DISTRO}
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -104,8 +107,12 @@ RUN if [ "${ROS_DISTRO}" = "humble" ]; then \
 
 # Copy built artifacts and runtime assets
 COPY --from=builder ${APP_WS}/install ${APP_WS}/install
+COPY --from=builder ${APP_WS}/src/agent/symphony-sdk-python ${APP_WS}/src/agent/symphony-sdk-python
 COPY --from=builder /work/launch /work/launch
 COPY --from=builder /work/config /work/config
+
+# Install symphony-sdk-python (required by agent at runtime)
+RUN pip3 install --no-cache-dir -e ${APP_WS}/src/agent/symphony-sdk-python
 
 # Provide an entrypoint that sources environments and runs launch
 COPY container/entrypoint.sh /entrypoint.sh
