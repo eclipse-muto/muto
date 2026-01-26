@@ -17,6 +17,7 @@ jobs:
           git submodule update --init --recursive
           apt-get install python3-pip -y
           pip3 install setuptools==58.2.0
+          pip3 install --no-cache-dir -e src/agent/symphony-sdk-python
           . /opt/ros/humble/setup.sh
           rosdep update -y
           rosdep install --from-path src --ignore-src -r -y --rosdistro humble
