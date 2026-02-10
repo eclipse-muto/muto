@@ -55,8 +55,14 @@ jobs:
           cd /tmp/ws
           source /opt/ros/humble/setup.sh
           source install/setup.sh
-          cd src/muto/src/composer
+          cd src/muto/src/agent
+          python3 -m coverage run --source=agent -m unittest discover -s test -p "test_*.py"
+          cd ../composer
           python3 -m coverage run --source=composer -m unittest discover -s test -p "test_*.py"
+          cd ../core
+          python3 -m coverage run --source=core -m unittest discover -s test -p "test_*.py"
+          cd ..
+          python3 -m coverage combine agent/.coverage composer/.coverage core/.coverage
           python3 -m coverage xml
 
       - name: Upload coverage report
@@ -64,4 +70,4 @@ jobs:
         id: unittest_coverage_report_xml
         with:
           name: test-coverage-xml
-          path: /tmp/ws/src/muto/src/composer/coverage.xml
+          path: /tmp/ws/src/muto/src/coverage.xml
