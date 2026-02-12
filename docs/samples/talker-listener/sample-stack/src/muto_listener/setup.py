@@ -4,7 +4,7 @@ package_name = 'muto_listener'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='0.42.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -13,10 +13,10 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='sel',
-    maintainer_email='ibrahim.sel@eteration.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    maintainer='composiv.ai',
+    maintainer_email='info@composiv.ai',
+    description='Eclipse Muto sample listener node that subscribes to string messages to demonstrate ROS 2 pub-sub communication',
+    license='Eclipse Public License v2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
