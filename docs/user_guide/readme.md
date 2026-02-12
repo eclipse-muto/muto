@@ -13,7 +13,8 @@ This user guide is organized into focused sections that take you from initial se
 - **[Quick Start](./quick_start.md)** - Fastest path to get Eclipse Muto and Eclipse Symphony running with Docker/Podman containers with an example
 - **[Running from source](../developer_guide/readme.md)** - Build, deploy and run from source
 
-### 📋 Usage and Operations  
+### 📋 Usage and Operations
+- **[Configuration](./configuration.md)** - Environment variables, launch arguments, and config files
 - **[Running Examples](./running_examples.md)** - Step-by-step example deployments
 - **[Troubleshooting](./troubleshooting.md)** - Solutions to common issues
 
