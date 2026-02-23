@@ -17,7 +17,6 @@ setup(
     maintainer_email='info@composiv.ai',
     description='Eclipse Muto sample listener node that subscribes to string messages to demonstrate ROS 2 pub-sub communication',
     license='Eclipse Public License v2.0',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'muto_listener = muto_listener.muto_listener:main'

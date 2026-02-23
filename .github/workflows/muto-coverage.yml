@@ -9,12 +9,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: osrf/ros:humble-desktop
+    container: ros:humble-ros-base
+    env:
+      PIP_BREAK_SYSTEM_PACKAGES: "1"
     outputs:
       test_coverage_url: ${{ steps.unittest_coverage_report_xml.outputs.artifact-url }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -30,12 +32,8 @@ jobs:
         run: |
           cd /tmp/ws
           apt-get update -y
-          apt-get install -y python3-pip \
-            python3-flake8 \
-            python3-autopep8 \
-            bc
-          pip3 install setuptools==58.2.0
-          pip3 install requests coverage
+          apt-get install -y python3-pip python3-colcon-common-extensions git bc
+          pip3 install coverage requests
           pip3 install src/muto/src/agent/symphony-sdk-python/
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
@@ -46,7 +44,6 @@ jobs:
         run: |
           cd /tmp/ws
           source /opt/ros/humble/setup.bash
-          echo "CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH"
           colcon build --symlink-install
 
       - name: Test
@@ -56,11 +53,11 @@ jobs:
           source /opt/ros/humble/setup.sh
           source install/setup.sh
           cd src/muto/src/agent
-          python3 -m coverage run --source=agent -m unittest discover -s test -p "test_*.py"
+          python3 -m coverage run --source=muto_agent -m unittest discover -s test -p "test_*.py"
           cd ../composer
-          python3 -m coverage run --source=composer -m unittest discover -s test -p "test_*.py"
+          python3 -m coverage run --source=muto_composer -m unittest discover -s test -p "test_*.py"
           cd ../core
-          python3 -m coverage run --source=core -m unittest discover -s test -p "test_*.py"
+          python3 -m coverage run --source=muto_core -m unittest discover -s test -p "test_*.py"
           cd ..
           python3 -m coverage combine agent/.coverage composer/.coverage core/.coverage
           python3 -m coverage xml

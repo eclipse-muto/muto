@@ -9,7 +9,7 @@ A ROS 2 Python workspace that pairs a talker and listener node on the `chatter` 
 - `src/muto_listener/` &mdash; Python package that exposes the `muto_listener` node.
 
 ## Prerequisites
-- A ROS 2 distribution (Foxy, Galactic, Humble, or Rolling) with Python support.
+- A ROS 2 distribution (Humble or Jazzy) with Python support.
 - `colcon` and `rosdep` installed for building and resolving dependencies.
 - A sourced ROS 2 environment (`source /opt/ros/<distro>/setup.bash`).
 

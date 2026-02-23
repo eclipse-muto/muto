@@ -2,6 +2,11 @@
 
 <img src="./docs/images/muto.png" alt="Eclipse Muto Modules" title="Eclipse Muto Modules" width="30%" style="display: block; margin: auto; width: 30%;">
 
+| ROS 2 Distro | Ubuntu | Python | Status |
+|---|---|---|---|
+| Humble | 22.04 | 3.10 | [![Humble](https://github.com/eclipse-muto/muto/actions/workflows/ci-humble.yaml/badge.svg)](https://github.com/eclipse-muto/muto/actions/workflows/ci-humble.yaml) |
+| Jazzy | 24.04 | 3.12 | [![Jazzy](https://github.com/eclipse-muto/muto/actions/workflows/ci-jazzy.yaml/badge.svg)](https://github.com/eclipse-muto/muto/actions/workflows/ci-jazzy.yaml) |
+
 ## Overview
 
 **Eclipse Muto** is an open-source, declarative orchestrator for managing ROS (Robot Operating System) software stacks on edge devices. It is an approach to robotics infrastructure management, enabling cloud-native orchestration of distributed ROS systems while maintaining the real-time performance and deterministic behavior required for robotic applications.
