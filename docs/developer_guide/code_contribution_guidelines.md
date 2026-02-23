@@ -372,13 +372,14 @@ class TestMutoIntegration(unittest.TestCase):
 ```bash
 # Run all tests
 cd ~/muto_ws
-colcon test --event-handlers console_direct+
+colcon test --python-testing pytest --event-handlers console_direct+
 
 # Run specific package tests
-colcon test --packages-select muto_agent --event-handlers console_direct+
+colcon test --python-testing pytest --packages-select muto_agent --event-handlers console_direct+
 
 # Run tests with coverage
-colcon test --packages-select muto_agent --pytest-args --cov
+pip3 install pytest-cov
+colcon test --python-testing pytest --packages-select muto_agent --pytest-args --cov
 
 # Check test results
 colcon test-result --verbose
@@ -413,7 +414,7 @@ flake8 src/ --max-line-length=88 --extend-ignore=E203,W503
 # 3. Run tests
 echo "3. Running tests..."
 cd ~/muto_ws
-colcon test --packages-select muto_agent muto_composer muto_core --event-handlers console_direct+
+colcon test --python-testing pytest --packages-select muto_agent muto_composer muto_core --event-handlers console_direct+
 colcon test-result --verbose
 
 # 4. Check commit signatures
