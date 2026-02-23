@@ -30,7 +30,7 @@ jobs:
       - name: Build
         run: |
           . /opt/ros/humble/setup.sh
-          colcon build --packages-select muto_msgs muto_core muto_agent muto_composer eclipse_muto
+          colcon build
 
       - name: Test
         run: |
