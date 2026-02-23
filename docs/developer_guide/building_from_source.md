@@ -336,6 +336,7 @@ source install/setup.bash
 # Run tests
 echo "Running tests..."
 colcon test \
+    --python-testing pytest \
     --event-handlers console_direct+ \
     --return-code-on-test-failure
 
@@ -523,7 +524,7 @@ colcon build \
 
 # Test
 source install/setup.bash
-colcon test --event-handlers console_direct+ --return-code-on-test-failure
+colcon test --python-testing pytest --event-handlers console_direct+ --return-code-on-test-failure
 
 # Static analysis
 if command -v flake8 >/dev/null; then
@@ -563,7 +564,7 @@ case "$1" in
         echo "Running tests..."
         cd ~/muto_ws
         source install/setup.bash
-        colcon test --event-handlers console_direct+
+        colcon test --python-testing pytest --event-handlers console_direct+
         ;;
     "clean")
         echo "Cleaning workspace..."
