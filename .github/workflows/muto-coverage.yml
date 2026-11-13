@@ -33,10 +33,10 @@ jobs:
           cd /tmp/ws
           apt-get update -y
           apt-get install -y python3-pip python3-colcon-common-extensions git bc
-          pip3 install pytest-cov requests
+          pip3 install "pytest<8" pytest-cov requests
           pip3 install src/muto/src/agent/symphony-sdk-python/
           rosdep update
-          rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
+          rosdep install --from-paths src/muto/src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y --rosdistro humble
         shell: bash
 
       - name: Build
@@ -44,7 +44,7 @@ jobs:
         run: |
           cd /tmp/ws
           source /opt/ros/humble/setup.bash
-          colcon build --symlink-install
+          colcon build --base-paths src/muto/src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install
 
       - name: Test
         shell: bash
@@ -52,7 +52,7 @@ jobs:
           cd /tmp/ws
           source /opt/ros/humble/setup.bash
           source install/setup.sh
-          colcon test --python-testing pytest \
+          colcon test --base-paths src/muto/src src/muto/src/agent/muto_paho_mqtt_vendor --python-testing pytest \
             --packages-select muto_agent muto_composer muto_core \
             --pytest-args --cov --cov-report= \
             --event-handlers console_direct+

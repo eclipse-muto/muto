@@ -61,7 +61,7 @@ colcon --help
 sudo apt update
 
 # Install missing dependencies
-rosdep install --from-paths src --ignore-src -r -y
+rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
 
 # For specific packages
 sudo apt install ros-humble-demo-nodes-cpp ros-humble-demo-nodes-py
