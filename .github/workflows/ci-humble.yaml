@@ -24,17 +24,17 @@ jobs:
           apt-get install -y python3-pip python3-colcon-common-extensions python3-pytest git
           . /opt/ros/humble/setup.sh
           rosdep update
-          rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
+          rosdep install --from-paths src src/agent/muto_paho_mqtt_vendor --ignore-src -r -y --rosdistro humble
           pip3 install src/agent/symphony-sdk-python/
 
       - name: Build
         run: |
           . /opt/ros/humble/setup.sh
-          colcon build
+          colcon build --base-paths src src/agent/muto_paho_mqtt_vendor
 
       - name: Test
         run: |
           . /opt/ros/humble/setup.sh
           . install/setup.sh
-          colcon test --python-testing pytest --event-handlers console_direct+
+          colcon test --base-paths src src/agent/muto_paho_mqtt_vendor --python-testing pytest --event-handlers console_direct+
           colcon test-result --verbose

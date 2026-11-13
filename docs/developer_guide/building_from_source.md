@@ -95,7 +95,7 @@ cd ~/muto_ws
 rosdep update
 
 # Install all package dependencies
-rosdep install --from-paths src --ignore-src -r -y
+rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
 
 # This installs ROS dependencies listed in package.xml files
 ```
@@ -146,7 +146,7 @@ cd ~/muto_ws
 rm -rf build/ install/ log/
 
 # Perform clean build
-colcon build --symlink-install
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install
 
 # Source the built workspace
 source install/setup.bash
@@ -157,13 +157,13 @@ source install/setup.bash
 cd ~/muto_ws
 
 # Build only changed packages
-colcon build --symlink-install --packages-up-to muto_agent muto_composer muto_core muto_msgs
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install --packages-up-to muto_agent muto_composer muto_core muto_msgs
 
 # Build specific package only
-colcon build --symlink-install --packages-select muto_agent
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install --packages-select muto_agent
 
 # Build with debug symbols
-colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug
 ```
 
 ### 3.3 Optimized Build (for Performance)
@@ -171,12 +171,12 @@ colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug
 cd ~/muto_ws
 
 # Parallel build with optimization
-colcon build --symlink-install \
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install \
     --cmake-args -DCMAKE_BUILD_TYPE=Release \
     --parallel-workers $(nproc)
 
 # Build with specific optimizations
-colcon build --symlink-install \
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install \
     --cmake-args \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_FLAGS="-O3 -march=native" \
@@ -359,7 +359,7 @@ sudo apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 # Create cross-compilation build
 cd ~/muto_ws
 
-colcon build --symlink-install \
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install \
     --cmake-args \
     -DCMAKE_TOOLCHAIN_FILE=../src/muto/cmake/aarch64-toolchain.cmake \
     -DCMAKE_BUILD_TYPE=Release
@@ -374,7 +374,7 @@ cd ~/muto_ws
 sudo apt install -y cppcheck clang-tidy
 
 # Build with static analysis
-colcon build --symlink-install \
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install \
     --cmake-args \
     -DCMAKE_BUILD_TYPE=Debug \
     -DENABLE_CPPCHECK=ON \
@@ -384,14 +384,14 @@ colcon build --symlink-install \
 ### 6.3 Sanitizer Builds
 ```bash
 # Build with AddressSanitizer
-colcon build --symlink-install \
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install \
     --cmake-args \
     -DCMAKE_BUILD_TYPE=Debug \
     -DCMAKE_CXX_FLAGS="-fsanitize=address -fno-omit-frame-pointer" \
     -DCMAKE_C_FLAGS="-fsanitize=address -fno-omit-frame-pointer"
 
 # Build with ThreadSanitizer
-colcon build --symlink-install \
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install \
     --cmake-args \
     -DCMAKE_BUILD_TYPE=Debug \
     -DCMAKE_CXX_FLAGS="-fsanitize=thread" \
@@ -406,7 +406,7 @@ colcon build --symlink-install \
 ```bash
 # Symptom: "Package 'xyz' not found"
 # Solution: Install missing dependencies
-rosdep install --from-paths src --ignore-src -r -y
+rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
 
 # For specific packages
 sudo apt search ros-humble-package-name
@@ -431,7 +431,7 @@ rm -rf build/ install/
 sudo apt update
 sudo apt install cmake build-essential
 
-colcon build --symlink-install --cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install --cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON
 ```
 
 ### 7.2 Build Performance Issues
@@ -473,7 +473,7 @@ rosdep update
 rosdep check --from-paths src --ignore-src
 
 # Install missing dependencies
-rosdep install --from-paths src --ignore-src -r -y --skip-keys="package_to_skip"
+rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y --skip-keys="package_to_skip"
 ```
 
 #### Python Environment Conflicts
@@ -513,7 +513,7 @@ rm -rf build/ install/ log/
 
 # Install dependencies
 rosdep update
-rosdep install --from-paths src --ignore-src -r -y
+rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
 
 # Build
 colcon build \
@@ -552,12 +552,12 @@ case "$1" in
         echo "Setting up development environment..."
         source /opt/ros/humble/setup.bash
         cd ~/muto_ws
-        rosdep install --from-paths src --ignore-src -r -y
+        rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
         ;;
     "build")
         echo "Building for development..."
         cd ~/muto_ws
-        colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug
+        colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug
         source install/setup.bash
         ;;
     "test")
