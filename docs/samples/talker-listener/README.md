@@ -11,7 +11,7 @@ This README describes:
 
 ## Prerequisites
 
-- ROS 2 (Humble or later) and `colcon` if running Muto natively
+- ROS 2 (Humble or Jazzy) and `colcon` if running Muto natively
 - Docker and Docker Compose (or `docker compose`) for Symphony
 - `curl`, `jq`, and `base64` available for the helper scripts
 
@@ -25,7 +25,7 @@ If you already have a built workspace and want to run Muto locally (native ROS 2
 
    1. Build
 
-      source /opt/ros/humble/setup.bash
+      source /opt/ros/<distro>/setup.bash   # <distro> = humble or jazzy
       colcon build --symlink-install
 
    2. Source the install overlay

@@ -24,7 +24,7 @@ This comprehensive troubleshooting guide helps you diagnose and resolve common i
 ```bash
 # Check if ROS 2 is installed
 ls /opt/ros/
-# Should show 'humble' directory
+# Should show 'humble' or 'jazzy' directory
 
 # Check PATH
 echo $PATH | grep ros
@@ -32,6 +32,7 @@ echo $PATH | grep ros
 **Solutions**:
 ```bash
 # Source ROS 2 environment
+# (replace humble with jazzy on Ubuntu 24.04)
 source /opt/ros/humble/setup.bash
 
 # Add to bashrc permanently
@@ -39,7 +40,7 @@ echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
 # If ROS 2 not installed, install it
 sudo apt update
-sudo apt install ros-humble-desktop
+sudo apt install ros-humble-desktop   # ros-humble-desktop on Ubuntu 22.04
 ```
 
 #### Issue: `colcon: command not found`
@@ -64,7 +65,7 @@ sudo apt update
 rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
 
 # For specific packages
-sudo apt install ros-humble-demo-nodes-cpp ros-humble-demo-nodes-py
+sudo apt install ros-$ROS_DISTRO-demo-nodes-cpp ros-$ROS_DISTRO-demo-nodes-py
 ```
 
 ### Muto Build Issues
@@ -228,8 +229,8 @@ When reporting issues, include:
 
 ```
 **Environment:**
-- OS: Ubuntu 22.04
-- ROS 2: Humble
+- OS: Ubuntu 22.04 / 24.04
+- ROS 2: Humble / Jazzy
 - Muto Version: [commit hash]
 - Deployment: Native/Container
 

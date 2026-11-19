@@ -381,7 +381,7 @@ COPY --from=builder /opt/workspace/install /opt/workspace/install
 ### Containerfile Standards
 
 #### Base Image Selection
-- **Use official ROS images** as base (`ros:humble`) for consistency
+- **Use official ROS images** as base (`ros:humble` or `ros:jazzy`) for consistency
 - **Pin specific versions** for reproducible builds
 - **Choose minimal base images** when possible while maintaining functionality
 

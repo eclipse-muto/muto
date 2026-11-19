@@ -32,7 +32,7 @@ Before diving into development, you should have:
 
 - **Strong ROS 2 Experience**: Understanding of ROS 2 concepts, launch systems, and node development
 - **Python Proficiency**: Most Muto components are written in Python 3.8+
-- **Linux Expertise**: Development is primarily on Ubuntu 20.04/22.04
+- **Linux Expertise**: Development is primarily on Ubuntu 22.04 (ROS 2 Humble) and 24.04 (ROS 2 Jazzy)
 - **Git/GitHub Skills**: Version control and collaborative development
 - **Container Knowledge**: Docker/Podman for testing and deployment
 - **Networking Basics**: MQTT, HTTP protocols for distributed systems

@@ -8,7 +8,7 @@ Before running these examples, ensure you have:
 
 - ✅ Eclipse Muto installed and running (see [Quick Start Guide](./quick_start.md))
 - ✅ Eclipse Symphony services running (if using cloud orchestration)
-- ✅ ROS 2 Humble or later installed and sourced
+- ✅ ROS 2 Humble or Jazzy installed and sourced
 - ✅ Basic familiarity with ROS concepts and JSON
 
 ## Example 1: Simple Talker-Listener Stack
