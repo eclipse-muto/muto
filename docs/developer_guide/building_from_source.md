@@ -6,7 +6,14 @@ This guide provides detailed instructions for building Eclipse Muto from source 
 
 Before building from source, ensure you have completed the prereqs. You should have:
 
-- ✅ Ubuntu with [ROS 2 installed](https://docs.ros.org/en/humble/Installation.html)
+- ✅ A supported OS / ROS 2 combination with [ROS 2 installed](https://docs.ros.org/en/humble/Installation.html):
+
+  | ROS 2 distro | Ubuntu | Python |
+  |---|---|---|
+  | Humble | 22.04 | 3.10 |
+  | Jazzy | 24.04 | 3.12 |
+
+  All commands in this guide work on both distros; they use the `ROS_DISTRO` environment variable (see Step 1.0).
 - ✅ Colcon build system and development tools
 - ✅ Python 3.10+ with required packages
 - ✅ Git configured for development
@@ -39,11 +46,21 @@ muto/
 │       └── package.xml
 ├── config/                      # Configuration files
 ├── launch/                      # ROS launch files
-├── docs/                        # Documentation
-└── newdocs/                     # New documentation structure
+└── docs/                        # Documentation
 ```
 
 ## Step 1: Workspace Setup
+
+### 1.0 Select Your ROS 2 Distribution
+```bash
+# Pick the distro installed on your machine: humble (Ubuntu 22.04) or jazzy (Ubuntu 24.04)
+export ROS_DISTRO=humble   # or: jazzy
+
+# Sourcing the ROS 2 setup script also sets ROS_DISTRO, so you can add this to ~/.bashrc
+source /opt/ros/$ROS_DISTRO/setup.bash
+```
+
+The remaining steps assume `ROS_DISTRO` is set in your shell. The helper scripts created in Steps 5 and 8 default to `humble` when it is not set.
 
 ### 1.1 Create and Initialize Workspace
 ```bash
@@ -75,11 +92,15 @@ cd ~/muto_ws/src/muto
 
 # Check repository structure
 find . -name "package.xml" -type f
-# Expected output:
+# Expected output (order may vary):
 # ./src/agent/package.xml
+# ./src/agent/muto_paho_mqtt_vendor/package.xml   <- nested in the agent, needs --base-paths (see Step 3)
 # ./src/composer/package.xml
 # ./src/core/package.xml
 # ./src/messages/package.xml
+# ./src/eclipse_muto/package.xml                   <- meta package
+# ./docs/samples/talker-listener/sample-stack/src/muto_listener/package.xml
+# ./docs/samples/talker-listener/sample-stack/src/muto_talker/package.xml
 
 # Check Python packages
 find . -name "__init__.py" -type f | head -10
@@ -90,6 +111,10 @@ find . -name "__init__.py" -type f | head -10
 ### 2.1 Install System Dependencies
 ```bash
 cd ~/muto_ws
+
+# Refresh the apt package index (required on fresh systems / dev containers, otherwise
+# rosdep and apt fail with "Unable to locate package")
+sudo apt update
 
 # Update rosdep database
 rosdep update
@@ -102,38 +127,40 @@ rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignor
 
 ### 2.2 Install Python Dependencies
 ```bash
-# Install dependencies for agent
-cd ~/muto_ws/src/muto/src/agent
-if [ -f requirements.txt ]; then
-    pip3 install --user -r requirements.txt
+# pip options differ per distro:
+#  - Humble / Ubuntu 22.04: the system pip is too old to build the hatchling-based symphony-sdk, upgrade it first
+#  - Jazzy  / Ubuntu 24.04: the system Python is "externally managed" (PEP 668), so --user installs need
+#    --break-system-packages (or use a virtual environment, see 7.3)
+if [ "$ROS_DISTRO" = "humble" ]; then
+    python3 -m pip install --user --upgrade pip
+    PIP_FLAGS="--user"
+else
+    PIP_FLAGS="--user --break-system-packages"
 fi
 
-# Install dependencies for composer
-cd ~/muto_ws/src/muto/src/composer
-if [ -f requirements.txt ]; then
-    pip3 install --user -r requirements.txt
-fi
+# Install the Symphony SDK bundled with the agent (required by muto_agent)
+python3 -m pip install $PIP_FLAGS ~/muto_ws/src/muto/src/agent/symphony-sdk-python
 
 # Install common dependencies manually
-pip3 install --user \
+python3 -m pip install $PIP_FLAGS \
     pyyaml \
     jsonschema \
     requests \
     websocket-client \
     paho-mqtt \
-    aiohttp \
-    asyncio-mqtt
+    aiohttp
 ```
 
 ### 2.3 Install Demo Dependencies (for testing)
 ```bash
 # Install demo packages for examples and testing
+# (run "sudo apt update" first if you skipped it in 2.1)
 sudo apt install -y \
-    ros-humble-demo-nodes-cpp \
-    ros-humble-demo-nodes-py \
-    ros-humble-example-interfaces \
-    ros-humble-rclcpp-components \
-    ros-humble-composition-interfaces
+    ros-$ROS_DISTRO-demo-nodes-cpp \
+    ros-$ROS_DISTRO-demo-nodes-py \
+    ros-$ROS_DISTRO-example-interfaces \
+    ros-$ROS_DISTRO-rclcpp-components \
+    ros-$ROS_DISTRO-composition-interfaces
 ```
 
 ## Step 3: Build Process
@@ -193,13 +220,21 @@ cd ~/muto_ws
 colcon list --packages-up-to muto_agent muto_composer muto_core muto_msgs
 
 # Check installed executables
-find install/ -name "muto_*" -type f -executable
+find install/muto_agent/lib install/muto_composer/lib install/muto_core/lib -type f -executable | sort
 # Expected files:
+# install/muto_agent/lib/muto_agent/commands
+# install/muto_agent/lib/muto_agent/mqtt
 # install/muto_agent/lib/muto_agent/muto_agent
+# install/muto_agent/lib/muto_agent/symphony_provider
+# install/muto_composer/lib/muto_composer/compose_plugin
+# install/muto_composer/lib/muto_composer/launch_plugin
 # install/muto_composer/lib/muto_composer/muto_composer
-# install/muto_core/lib/muto_core/muto_core
+# install/muto_composer/lib/muto_composer/provision_plugin
+# install/muto_core/lib/muto_core/twin
 
 # Check Python packages
+# (with --symlink-install the pure-Python packages are linked to the source tree,
+#  so only the generated muto_msgs package is found here)
 find install/ -name "muto_*" -type d | grep -E "site-packages|dist-packages"
 ```
 
@@ -210,16 +245,29 @@ source ~/muto_ws/install/setup.bash
 
 # Test package discovery
 ros2 pkg list | grep muto
-# Expected output:
+# Expected output (eclipse_muto is the meta package, muto_listener/muto_talker are the talker-listener sample stack):
 # muto_agent
 # muto_composer
 # muto_core
+# eclipse_muto
+# muto_listener
 # muto_msgs
+# muto_paho_mqtt_vendor
+# muto_talker
 
 # Test executable discovery
 ros2 pkg executables muto_agent
+# muto_agent commands
+# muto_agent mqtt
+# muto_agent muto_agent
+# muto_agent symphony_provider
 ros2 pkg executables muto_composer
+# muto_composer compose_plugin
+# muto_composer launch_plugin
+# muto_composer muto_composer
+# muto_composer provision_plugin
 ros2 pkg executables muto_core
+# muto_core twin
 
 # Test message types
 ros2 interface list | grep muto_msgs
@@ -229,8 +277,8 @@ ros2 interface list | grep muto_msgs
 ```bash
 # Test each component individually (in separate terminals)
 
-# Terminal 1: Test core
-ros2 run muto_core muto_core --ros-args --log-level debug
+# Terminal 1: Test core (the muto_core package provides the `twin` executable)
+ros2 run muto_core twin --ros-args --log-level debug
 
 # Terminal 2: Test agent
 ros2 run muto_agent muto_agent --ros-args --log-level debug
@@ -239,7 +287,11 @@ ros2 run muto_agent muto_agent --ros-args --log-level debug
 ros2 run muto_composer muto_composer --ros-args --log-level debug
 
 # Terminal 4: Check nodes are running
-ros2 node list | grep muto
+ros2 node list
+# Expected output:
+# /core_twin
+# /muto_agent
+# /muto_composer
 ```
 
 ## Step 5: Build Customization
@@ -253,6 +305,7 @@ set -e
 
 echo "Building Eclipse Muto for development..."
 
+source /opt/ros/${ROS_DISTRO:-humble}/setup.bash
 cd ~/muto_ws
 
 # Clean build artifacts
@@ -260,6 +313,7 @@ rm -rf build/ install/ log/
 
 # Build with debug symbols and development flags
 colcon build \
+    --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor \
     --symlink-install \
     --cmake-args \
     -DCMAKE_BUILD_TYPE=Debug \
@@ -286,6 +340,7 @@ set -e
 
 echo "Building Eclipse Muto for production..."
 
+source /opt/ros/${ROS_DISTRO:-humble}/setup.bash
 cd ~/muto_ws
 
 # Clean build artifacts
@@ -293,6 +348,7 @@ rm -rf build/ install/ log/
 
 # Build with optimizations
 colcon build \
+    --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor \
     --symlink-install \
     --cmake-args \
     -DCMAKE_BUILD_TYPE=Release \
@@ -320,10 +376,15 @@ set -e
 
 echo "Building and testing Eclipse Muto..."
 
+source /opt/ros/${ROS_DISTRO:-humble}/setup.bash
 cd ~/muto_ws
+
+# Clean build artifacts
+rm -rf build/ install/ log/
 
 # Build for testing
 colcon build \
+    --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor \
     --symlink-install \
     --cmake-args \
     -DCMAKE_BUILD_TYPE=Debug \
@@ -336,6 +397,7 @@ source install/setup.bash
 # Run tests
 echo "Running tests..."
 colcon test \
+    --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor \
     --python-testing pytest \
     --event-handlers console_direct+ \
     --return-code-on-test-failure
@@ -351,37 +413,31 @@ chmod +x ~/muto_ws/build_test.sh
 
 ## Step 6: Advanced Build Options
 
-### 6.1 Cross-Compilation (for ARM64)
+### 6.1 Static Analysis
+The Muto packages are Python. Each one (`agent`, `composer`, `core`) ships its own `ruff.toml` and `mypy.ini`, so static analysis is done with ruff (linting) and mypy (type checking):
+
 ```bash
-# Install cross-compilation tools
-sudo apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+# Install the Python linters (pip options as in Step 2.2)
+if [ "$ROS_DISTRO" = "humble" ]; then
+    PIP_FLAGS="--user"
+else
+    PIP_FLAGS="--user --break-system-packages"
+fi
+python3 -m pip install $PIP_FLAGS ruff mypy
+export PATH="$HOME/.local/bin:$PATH"   # where pip --user installs ruff/mypy
 
-# Create cross-compilation build
-cd ~/muto_ws
-
-colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install \
-    --cmake-args \
-    -DCMAKE_TOOLCHAIN_FILE=../src/muto/cmake/aarch64-toolchain.cmake \
-    -DCMAKE_BUILD_TYPE=Release
+# Run both tools in each package, using the package's own configuration
+for pkg in agent composer core; do
+    echo "=== muto_$pkg"
+    cd ~/muto_ws/src/muto/src/$pkg
+    ruff check .
+    mypy muto_$pkg
+done
 ```
 
-### 6.2 Static Analysis Build
-```bash
-# Build with static analysis tools
-cd ~/muto_ws
+Both tools print the issues they find and a summary line per package (for example `Found 12 errors.` or `Success: no issues found`).
 
-# Install static analysis tools
-sudo apt install -y cppcheck clang-tidy
-
-# Build with static analysis
-colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install \
-    --cmake-args \
-    -DCMAKE_BUILD_TYPE=Debug \
-    -DENABLE_CPPCHECK=ON \
-    -DENABLE_CLANG_TIDY=ON
-```
-
-### 6.3 Sanitizer Builds
+### 6.2 Sanitizer Builds
 ```bash
 # Build with AddressSanitizer
 colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install \
@@ -409,14 +465,15 @@ colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink
 rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
 
 # For specific packages
-sudo apt search ros-humble-package-name
-sudo apt install ros-humble-package-name
+sudo apt search ros-$ROS_DISTRO-package-name
+sudo apt install ros-$ROS_DISTRO-package-name
 ```
 
 #### Error: Python import failures
 ```bash
 # Symptom: "ModuleNotFoundError: No module named 'xyz'"
 # Solution: Install Python dependencies
+# (on Jazzy / Ubuntu 24.04 add --break-system-packages, or install inside a virtual environment)
 pip3 install --user module-name
 
 # Check Python path
@@ -439,20 +496,20 @@ colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink
 #### Slow Build Times
 ```bash
 # Use parallel builds
-colcon build --parallel-workers $(nproc)
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --parallel-workers $(nproc)
 
 # Use ccache for faster rebuilds
-sudo apt install ccache
+sudo apt install -y ccache
 export PATH="/usr/lib/ccache:$PATH"
 
 # Build only changed packages
-colcon build --packages-up-to changed_package
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --packages-up-to changed_package
 ```
 
 #### Memory Issues During Build
 ```bash
 # Limit parallel workers to reduce memory usage
-colcon build --parallel-workers 2
+colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --parallel-workers 2
 
 # Use swap if needed
 sudo fallocate -l 4G /swapfile
@@ -470,7 +527,7 @@ sudo rosdep init  # Only if not already initialized
 rosdep update
 
 # Check for missing dependencies
-rosdep check --from-paths src --ignore-src
+rosdep check --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src
 
 # Install missing dependencies
 rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y --skip-keys="package_to_skip"
@@ -484,13 +541,18 @@ python3 --version
 # Check pip version
 pip3 --version
 
-# Reset pip if corrupted
-python3 -m pip install --user --upgrade pip setuptools wheel
+# Reset pip if corrupted (Humble; on Jazzy use a virtual environment instead, see below)
+python3 -m pip install --user --upgrade pip
 
-# Use virtual environment if needed
-python3 -m venv ~/muto_venv
+# Use virtual environment if needed (recommended on Jazzy / Ubuntu 24.04, where pip refuses to modify the system Python)
+# (--system-site-packages keeps the ROS 2 Python packages such as rclpy visible)
+# The venv module is not installed by default on Ubuntu; install it first
+sudo apt install -y python3-venv
+python3 -m venv --system-site-packages ~/muto_venv
 source ~/muto_venv/bin/activate
-pip install -r requirements.txt
+python3 -m pip install --upgrade pip
+python3 -m pip install ~/muto_ws/src/muto/src/agent/symphony-sdk-python
+python3 -m pip install pyyaml jsonschema requests websocket-client paho-mqtt aiohttp
 ```
 
 ## Step 8: Build Automation
@@ -504,27 +566,33 @@ set -euo pipefail
 
 echo "=== Eclipse Muto CI Build ==="
 
-# Environment setup
-source /opt/ros/humble/setup.bash
+# Environment setup (ROS setup scripts reference unset variables, so relax `set -u` while sourcing)
+set +u
+source /opt/ros/${ROS_DISTRO:-humble}/setup.bash
+set -u
 cd ~/muto_ws
 
 # Clean workspace
 rm -rf build/ install/ log/
 
 # Install dependencies
+sudo apt update
 rosdep update
 rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
 
 # Build
 colcon build \
+    --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor \
     --symlink-install \
     --cmake-args -DCMAKE_BUILD_TYPE=Release \
     --event-handlers console_cohesion+ \
     --parallel-workers $(nproc)
 
 # Test
+set +u
 source install/setup.bash
-colcon test --python-testing pytest --event-handlers console_direct+ --return-code-on-test-failure
+set -u
+colcon test --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --python-testing pytest --event-handlers console_direct+ --return-code-on-test-failure
 
 # Static analysis
 if command -v flake8 >/dev/null; then
@@ -550,21 +618,23 @@ cat > ~/muto_ws/dev_workflow.sh << 'EOF'
 case "$1" in
     "setup")
         echo "Setting up development environment..."
-        source /opt/ros/humble/setup.bash
+        source /opt/ros/${ROS_DISTRO:-humble}/setup.bash
         cd ~/muto_ws
         rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
         ;;
     "build")
         echo "Building for development..."
+        source /opt/ros/${ROS_DISTRO:-humble}/setup.bash
         cd ~/muto_ws
         colcon build --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug
         source install/setup.bash
         ;;
     "test")
         echo "Running tests..."
+        source /opt/ros/${ROS_DISTRO:-humble}/setup.bash
         cd ~/muto_ws
         source install/setup.bash
-        colcon test --python-testing pytest --event-handlers console_direct+
+        colcon test --base-paths src src/muto/src/agent/muto_paho_mqtt_vendor --python-testing pytest --event-handlers console_direct+
         ;;
     "clean")
         echo "Cleaning workspace..."
@@ -573,6 +643,12 @@ case "$1" in
         ;;
     "format")
         echo "Formatting code..."
+        export PATH="$HOME/.local/bin:$PATH"   # where pip --user installs black/isort
+        if [ "${ROS_DISTRO:-humble}" = "humble" ]; then
+            python3 -m pip install --user black isort
+        else
+            python3 -m pip install --user --break-system-packages black isort
+        fi
         cd ~/muto_ws/src/muto
         find . -name "*.py" -exec black {} +
         find . -name "*.py" -exec isort {} +
@@ -595,82 +671,29 @@ chmod +x ~/muto_ws/dev_workflow.sh
 ## Step 9: Build Verification and Testing
 
 ### 9.1 Integration Test
+
+Start the whole Muto system and deploy a one-node test stack.
+
 ```bash
-# Create integration test script
-cat > ~/muto_ws/integration_test.sh << 'EOF'
-#!/bin/bash
-set -e
+# Terminal 1: start Muto (agent, gateway, twin, composer and plugins in the /muto namespace)
+source ~/muto_ws/install/setup.bash
+ros2 launch ~/muto_ws/src/muto/launch/muto.launch.py vehicle_name:=test-robot enable_symphony:=false
+```
 
-echo "=== Eclipse Muto Integration Test ==="
-
-cd ~/muto_ws
-source install/setup.bash
-
-# Start core in background
-ros2 run muto_core muto_core &
-CORE_PID=$!
-sleep 2
-
-# Start agent in background  
-ros2 run muto_agent muto_agent &
-AGENT_PID=$!
-sleep 2
-
-# Start composer in background
-ros2 run muto_composer muto_composer &
-COMPOSER_PID=$!
-sleep 5
-
-# Test basic functionality
-echo "Testing node discovery..."
+```bash
+# Terminal 2: check the Muto nodes, then deploy a stack with a single talker node
+source ~/muto_ws/install/setup.bash
 ros2 node list | grep muto
 
-echo "Testing topic discovery..."
-ros2 topic list | grep muto
+ros2 topic pub --once /muto/stack muto_msgs/msg/MutoAction \
+  "{method: 'start', payload: '{\"metadata\": {\"name\": \"test\", \"content_type\": \"stack/json\"}, \"launch\": {\"node\": [{\"name\": \"test_talker\", \"pkg\": \"demo_nodes_cpp\", \"exec\": \"talker\"}]}}'}"
 
-# Deploy test stack
-echo "Testing stack deployment..."
-cat > /tmp/test_stack.json << 'STACK_EOF'
-{
-  "name": "Integration Test Stack",
-  "stackId": "test:integration:v1.0",
-  "node": [
-    {
-      "name": "test_talker",
-      "pkg": "demo_nodes_cpp",
-      "exec": "talker",
-      "namespace": "/integration_test"
-    }
-  ]
-}
-STACK_EOF
-
-# Deploy stack
-ros2 topic pub --once /muto/stack muto_msgs/MutoAction \
-  "{header: {stamp: {sec: 0, nanosec: 0}, frame_id: 'integration'}, 
-   action: 'start', 
-   stack: '$(cat /tmp/test_stack.json | jq -c .)'}"
-
-sleep 5
-
-# Check if test node is running
-if ros2 node list | grep test_talker; then
-    echo "✓ Integration test PASSED"
-    TEST_RESULT=0
-else
-    echo "✗ Integration test FAILED"
-    TEST_RESULT=1
-fi
-
-# Cleanup
-kill $CORE_PID $AGENT_PID $COMPOSER_PID 2>/dev/null
-rm -f /tmp/test_stack.json
-
-exit $TEST_RESULT
-EOF
-
-chmod +x ~/muto_ws/integration_test.sh
+# After a few seconds the talker started by Muto should be listed
+ros2 node list | grep test_talker
+# Expected output: /test_talker
 ```
+
+Stop Muto with Ctrl+C in Terminal 1.
 
 ## Conclusion
 
@@ -678,7 +701,7 @@ You now have Eclipse Muto built from source with multiple build configurations a
 
 ### ✅ Build Outputs
 - **Executables**: `install/*/lib/*/*` - Ready to run Muto components
-- **Python Packages**: `install/*/lib/python*/site-packages/muto_*` - Importable modules
+- **Python Packages**: `install/*/lib/python*/site-packages/` (Jazzy) or `install/*/local/lib/python*/dist-packages/` (Humble, generated `muto_msgs`) - Importable modules
 - **Message Types**: `install/*/share/*/msg/` - ROS message definitions
 - **Launch Files**: `install/*/share/*/launch/` - ROS launch configurations
 
@@ -695,7 +718,7 @@ You now have Eclipse Muto built from source with multiple build configurations a
 cd ~/muto_ws
 ~/muto_ws/dev_workflow.sh build    # Build changes
 ~/muto_ws/dev_workflow.sh test     # Run tests
-~/muto_ws/integration_test.sh      # Verify integration
+# Verify integration: see Step 9.1
 ```
 
 Your Eclipse Muto build is now ready for development, testing, and deployment!

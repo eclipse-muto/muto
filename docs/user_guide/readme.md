@@ -1,8 +1,6 @@
 # Eclipse Muto - User Guide
 
-Welcome to the Eclipse 🔧 **Advanced Features**: Try [Advanced Configuration](../developer_guide/advanced_configuration.md)
-
-📚 **Technical Deep Dive**: Read [Reference Documentation](../reference/readme.md)r Guide! This comprehensive guide will help you understand, deploy, and use Eclipse Muto for managing ROS software stacks on edge devices.
+Welcome to the Eclipse Muto User Guide! This comprehensive guide will help you understand, deploy, and use Eclipse Muto for managing ROS software stacks on edge devices.
 
 ## What You'll Find Here
 
@@ -71,12 +69,12 @@ Eclipse Muto supports multiple deployment approaches to fit different use cases:
 ## Navigation Guide
 
 ### New Users Start Here
-1. Read the **[Introduction](../project_overview.md.md)** to understand Eclipse Muto
+1. Read the **[Introduction](../project_overview.md)** to understand Eclipse Muto
 2. Follow the **[Quick Start](./quick_start.md)** for your preferred deployment method
 3. Run through **[Running Examples](./running_examples.md)** to see Muto in action
 
 ### Operational Reference
-- Daily operations: **[Common User Commands](./common_user_commands.md)**
+- Daily operations: **[Troubleshooting](./troubleshooting.md)**
 - Problem solving: **[Troubleshooting](./troubleshooting.md)**
 
 ## Key Concepts
@@ -128,3 +126,7 @@ Visit [Dashboard](https://dashboard.composiv.ai) for more details
 ---
 
 **Ready to get started?** Begin with the **[Introduction](../project_overview.md)** or jump directly to the **[Quick Start](./quick_start.md)** guide!
+
+🔧 **Advanced Features**: Try [Configuration](./configuration.md)
+
+📚 **Technical Deep Dive**: Read [Reference Documentation](../reference/readme.md)

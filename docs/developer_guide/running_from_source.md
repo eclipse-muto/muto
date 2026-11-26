@@ -5,7 +5,7 @@ This guide explains how to run Eclipse Muto components directly from source code
 ## Prerequisites
 
 Before running from source, ensure you have:
-- ✅ Completed [Development Environment Setup](./development_environment_setup.md)
+- ✅ Completed [Development Environment Setup](./building_from_source.md)
 - ✅ Successfully built Eclipse Muto from [Building from Source](./building_from_source.md)
 - ✅ Source workspace at `~/muto_ws` with built packages
 

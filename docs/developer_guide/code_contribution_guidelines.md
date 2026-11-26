@@ -15,7 +15,7 @@ Eclipse Muto is an open-source project developed under the Eclipse Foundation. W
 ## Prerequisites
 
 Before contributing, ensure you have:
-- ✅ Completed [Development Environment Setup](./development_environment_setup.md)
+- ✅ Completed [Development Environment Setup](./building_from_source.md)
 - ✅ Successfully built and run Muto from source
 - ✅ Familiarity with Git, GitHub, and ROS 2 development
 - ✅ Signed the Eclipse Contributor Agreement (ECA)
@@ -567,14 +567,13 @@ Before a PR can be merged, it must:
 ## Getting Help
 
 ### Resources
-- **GitHub Discussions**: [https://github.com/eclipse-muto/muto/discussions](https://github.com/eclipse-muto/muto/discussions)
 - **Issue Tracker**: [https://github.com/eclipse-muto/muto/issues](https://github.com/eclipse-muto/muto/issues)
 - **Eclipse Muto Project**: [https://projects.eclipse.org/projects/automotive.muto](https://projects.eclipse.org/projects/automotive.muto)
 - **Developer Documentation**: [Developer Guide](./readme.md)
 
 ### Support Channels
 - Create GitHub issues for bugs and feature requests
-- Use GitHub discussions for questions and ideas
+- Use GitHub issues for questions and ideas
 - Join Eclipse IoT working group meetings (when available)
 - Reach out to maintainers for guidance on large contributions
 

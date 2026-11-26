@@ -249,26 +249,11 @@ class CustomComposePlugin(BaseComposePlugin):
 
 ### Core Examples (Included)
 
-#### 1. **Talker-Listener Demo** (`docs/samples/talker-listener/`)
-**Description**: Classic ROS 2 pub/sub communication
-- **Demonstrates**: Basic stack deployment, node configuration
-- **Stack Format**: JSON with simple node definitions
-- **Complexity**: Beginner
-- **Runtime**: 5 minutes setup
-
-#### 2. **AprilTag Robot** (`docs/samples/april-tag-robot/`)  
-**Description**: Computer vision with marker detection
-- **Demonstrates**: Perception pipeline, image processing
-- **Stack Format**: JSON with composable nodes
-- **Complexity**: Intermediate
-- **Runtime**: 15 minutes setup
-
-#### 3. **Symphony Integration** (`docs/samples/symphony/`)
-**Description**: Full Eclipse Symphony orchestration
-- **Demonstrates**: Cloud deployment, fleet management
-- **Stack Format**: Symphony solutions and instances
-- **Complexity**: Advanced  
-- **Runtime**: 30 minutes setup
+#### **[Talker-Listener with Muto + Symphony](../samples/talker-listener/README.md)** (`docs/samples/talker-listener/`)
+**Description**: Classic ROS 2 talker/listener stack deployed by Eclipse Muto and orchestrated through Eclipse Symphony
+- **Demonstrates**: Running Muto locally, starting Symphony services, registering a solution and creating an instance, stack deployment
+- **Stack Format**: Plain JSON stack and packaged archive, delivered as Symphony solutions and instances
+- **Complexity**: Beginner to intermediate
 
 ### Extended Examples (Available Online)
 
@@ -303,9 +288,7 @@ class CustomComposePlugin(BaseComposePlugin):
    - Required packages installed
 
 2. **✅ Choose Your Example**
-   - Start with [Talker-Listener](./samples/talker-listener/README.md) for beginners
-   - Try [AprilTag Robot](./samples/april-tag-robot/README.md) for vision
-   - Explore [Symphony Integration](./samples/symphony/README.md) for orchestration
+   - Start with the [Talker-Listener sample (Muto + Symphony)](../samples/talker-listener/README.md), which covers both local Muto deployment and Symphony orchestration
 
 3. **✅ Follow the Guide**
    - Read example overview and objectives
@@ -320,9 +303,7 @@ class CustomComposePlugin(BaseComposePlugin):
 
 ### Navigation Guide
 
-- **New to Muto**: Start with [Talker-Listener Example](./samples/talker-listener/README.md)
-- **Computer Vision**: Explore [AprilTag Detection](./samples/april-tag-robot/README.md)  
-- **Cloud Integration**: Learn [Symphony Orchestration](./samples/symphony/README.md)
+- **New to Muto / Cloud Integration**: Start with the [Talker-Listener sample (Muto + Symphony)](../samples/talker-listener/README.md)
 - **Custom Development**: Review modification and extension patterns above
 
 ## Community Examples
@@ -338,7 +319,7 @@ Share your own examples and learn from the community:
 
 ## Next Steps
 
-🚀 **Start with Examples**: Choose your first example from the [samples directory](./samples/)
+🚀 **Start with Examples**: Choose your first example from the [samples directory](../samples/)
 
 📚 **Learn More**: Dive deeper with the [User Guide](../user_guide/readme.md)
 

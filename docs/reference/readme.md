@@ -15,15 +15,12 @@ The Eclipse Muto reference documentation is organized by component to provide in
 - **[Messages](./messages/readme.md)** - ROS 2 message and service type definitions
 
 ### Integration References
-- **[Symphony Integration](./symphony/readme.md)** - Eclipse Symphony orchestration platform integration
-- **[Ditto Integration](./ditto/readme.md)** - Eclipse Ditto digital twin platform integration
-- **[MQTT Integration](./mqtt/readme.md)** - MQTT messaging protocol integration
-- **[Container Integration](./container/readme.md)** - Docker/Podman container management
+- **[Talker-Listener Sample (Muto + Symphony)](../samples/talker-listener/README.md)** - End-to-end example of Muto with Eclipse Symphony orchestration (solution/instance workflow)
+- **[Container Integration](../../container/README.md)** - Docker/Podman container management
 
 ### Configuration References
-- **[Configuration Schema](./configuration/readme.md)** - Complete configuration file reference
-- **[Stack Format](./stack_format/readme.md)** - Stack definition JSON schema and examples
-- **[Launch Integration](./launch/readme.md)** - ROS 2 launch system integration details
+- **[Configuration Schema](../user_guide/configuration.md)** - Complete configuration file reference
+- **[Stack Format](../samples/muto/)** - Stack definition JSON schema and examples
 
 ## Component Architecture Overview
 
@@ -116,9 +113,9 @@ The **Muto Composer** is the heart of edge orchestration, managing ROS stack lif
 - **Launch Plugin**: ROS launch system integration
 - **Introspection Engine**: System analysis and monitoring
 
-**Source Code**: [`src/composer/`](../../../src/composer/)
+**Source Code**: [`src/composer/`](../../src/composer/)
 
-### Core (`src/core/` → [📖 Documentation](./core/README.md))
+### Core (`src/core/` → [📖 Documentation](./core/readme.md))
 
 The **Core** component provides foundational services and utilities for managing the digital twins.
 
@@ -133,9 +130,9 @@ The **Core** component provides foundational services and utilities for managing
 - **Common Interfaces**: Shared abstractions and patterns
 - **Configuration System**: Centralized configuration handling
 
-**Source Code**: [`src/core/`](../../../src/core/)
+**Source Code**: [`src/core/`](../../src/core/)
 
-### Messages (`src/messages/` → [📖 Documentation](./messages/README.md))
+### Messages (`src/messages/` → [📖 Documentation](./messages/readme.md))
 
 The **Messages** component defines all ROS message types and service interfaces for system communication.
 
@@ -150,7 +147,7 @@ The **Messages** component defines all ROS message types and service interfaces 
 - **Service Definitions**: ROS `.srv` files for request/response patterns
 - **Build Configuration**: CMake and package configuration
 
-**Source Code**: [`src/messages/`](../../../src/messages/)
+**Source Code**: [`src/messages/`](../../src/messages/)
 
 ## API Reference Overview
 
@@ -218,10 +215,10 @@ class CustomComposePlugin(BaseComposePlugin):
 
 ### Component-Specific Navigation
 
-- **Agent Deep Dive**: [Agent Reference](./agent/README.md)
-- **Composer Architecture**: [Composer Reference](./composer/README.md)
-- **Core Services**: [Core Reference](./core/README.md)
-- **Message Protocols**: [Messages Reference](./messages/README.md)
+- **Agent Deep Dive**: [Agent Reference](./agent/readme.md)
+- **Composer Architecture**: [Composer Reference](./composer/readme.md)
+- **Core Services**: [Core Reference](./core/readme.md)
+- **Message Protocols**: [Messages Reference](./messages/readme.md)
 
 ### Cross-References
 
@@ -242,7 +239,7 @@ Help improve Eclipse Muto's reference documentation:
 
 ## Support and Resources
 
-- **Technical Questions**: Use [GitHub Discussions](https://github.com/eclipse-muto/muto/discussions)
+- **Technical Questions**: Use [GitHub Issues](https://github.com/eclipse-muto/muto/issues)
 - **Bug Reports**: Submit [GitHub Issues](https://github.com/eclipse-muto/muto/issues)
 - **Feature Requests**: Propose enhancements via GitHub Issues
 - **Community**: Join the Eclipse Muto developer community

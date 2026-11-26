@@ -68,7 +68,8 @@ STACK_MANIFEST=$(cat << EOF
     "metadata": {
         "name": "${MANIFEST_NAME}",
         "description": "A simple talker-listener stack example using demo_nodes_cpp package.",
-        "content_type": "stack/archive"
+        "content_type": "stack/archive",
+        "version": "1"
     },
     "launch": {
         "data": "${STACK_DATA_BASE64}",

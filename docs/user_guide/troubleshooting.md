@@ -5,12 +5,7 @@ This comprehensive troubleshooting guide helps you diagnose and resolve common i
 ## Table of Contents
 - [Installation Issues](#installation-issues)
 - [Runtime Problems](#runtime-problems)
-- [Stack Deployment Issues](#stack-deployment-issues)
 - [Symphony Integration Problems](#symphony-integration-problems)
-- [Performance Issues](#performance-issues)
-- [Network and Connectivity](#network-and-connectivity)
-- [Container-Specific Issues](#container-specific-issues)
-- [Development Environment Issues](#development-environment-issues)
 
 ---
 
@@ -31,16 +26,18 @@ echo $PATH | grep ros
 ```
 **Solutions**:
 ```bash
-# Source ROS 2 environment
-# (replace humble with jazzy on Ubuntu 24.04)
-source /opt/ros/humble/setup.bash
+# Select your ROS 2 distribution: humble (Ubuntu 22.04) or jazzy (Ubuntu 24.04)
+export ROS_DISTRO=humble   # or: jazzy
 
-# Add to bashrc permanently
-echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+# Source ROS 2 environment
+source /opt/ros/$ROS_DISTRO/setup.bash
+
+# Add to bashrc permanently ($ROS_DISTRO is expanded now, so the line contains the distro name)
+echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 # If ROS 2 not installed, install it
 sudo apt update
-sudo apt install ros-humble-desktop   # ros-humble-desktop on Ubuntu 22.04
+sudo apt install ros-$ROS_DISTRO-desktop
 ```
 
 #### Issue: `colcon: command not found`
@@ -219,7 +216,7 @@ When troubleshooting doesn't resolve your issue:
 
 1. **📋 Collect Information**: Use the diagnostic scripts above
 2. **🔍 Search Issues**: Check [GitHub Issues](https://github.com/eclipse-muto/muto/issues)
-3. **💬 Community**: Ask in [GitHub Discussions](https://github.com/eclipse-muto/muto/discussions)
+3. **💬 Community**: Ask questions in [GitHub Issues](https://github.com/eclipse-muto/muto/issues)
 4. **🐛 Report Bug**: Create detailed issue with logs and reproduction steps
 5. **📖 Documentation**: Review [User Guide](./readme.md) and [Reference](../reference/readme.md)
 

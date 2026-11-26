@@ -58,7 +58,8 @@ cat > talker-listener-json.json  << 'EOF'
   "metadata": {
     "name": "Muto Simple Talker-Listener Stack",
     "description": "A simple talker-listener stack example using demo_nodes_cpp package.",
-    "content_type": "stack/json"
+    "content_type": "stack/json",
+    "version": "1"
   },
   "launch": {
       "node": [
@@ -137,6 +138,9 @@ The typical deployment workflow using the provided scripts:
 3. **Deploy Instance**: Use the instance script to deploy the solution to the target
 
 ```bash
+# Select the image for your ROS 2 distribution
+MUTO_IMAGE=ghcr.io/eclipse-muto/muto:ros2-humble   # or: ghcr.io/eclipse-muto/muto:ros2-jazzy
+
 # Step 1: Start Muto container (Target auto-registers)
 podman run --rm -it \
   -e MUTO_LAUNCH=/work/launch/muto.launch.py \
@@ -144,7 +148,7 @@ podman run --rm -it \
   -v $(pwd)/launch:/work/launch:ro \
   -v $(pwd)/config:/work/config:ro \
   --network host \
-  ghcr.io/eclipse-muto/muto:ros2-humble
+  $MUTO_IMAGE
 
 # Step 2: Create solution (in another terminal)
 ./docs/samples/symphony/define-solution.sh  ./docs/samples/talker-listener/talker-listener-json.json 
@@ -303,7 +307,7 @@ If you encounter issues:
 2. **Verify Configuration**: Confirm Muto configuration matches your environment
 3. **Review Logs**: Check ROS logs and Muto component outputs
 4. **Test Incrementally**: Start with simple examples and add complexity
-5. **Community Support**: Ask questions in [GitHub Discussions](https://github.com/eclipse-muto/muto/discussions)
+5. **Community Support**: Ask questions in [GitHub Issues](https://github.com/eclipse-muto/muto/issues)
 
 ## Next Steps
 
