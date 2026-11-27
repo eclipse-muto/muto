@@ -32,7 +32,7 @@ Before diving into development, you should have:
 
 - **Strong ROS 2 Experience**: Understanding of ROS 2 concepts, launch systems, and node development
 - **Python Proficiency**: Most Muto components are written in Python 3.8+
-- **Linux Expertise**: Development is primarily on Ubuntu 20.04/22.04
+- **Linux Expertise**: Development is primarily on Ubuntu 22.04 (ROS 2 Humble) and 24.04 (ROS 2 Jazzy)
 - **Git/GitHub Skills**: Version control and collaborative development
 - **Container Knowledge**: Docker/Podman for testing and deployment
 - **Networking Basics**: MQTT, HTTP protocols for distributed systems
@@ -151,7 +151,7 @@ Declarative state management with reconciliation loops:
 ### Getting Started with Contributions
 
 1. **Read the Guidelines**: Start with [Code Contribution Guidelines](./code_contribution_guidelines.md)
-2. **Set Up Environment**: Follow [Development Environment Setup](./development_environment_setup.md)
+2. **Set Up Environment**: Follow [Development Environment Setup](./building_from_source.md)
 3. **Find an Issue**: Browse [GitHub Issues](https://github.com/eclipse-muto/muto/issues) for beginner-friendly tasks
 4. **Join the Community**: Engage with developers on GitHub discussions
 5. **Start Small**: Begin with documentation or small bug fixes
@@ -167,7 +167,7 @@ Declarative state management with reconciliation loops:
 - **Python Tools**: `pytest`, `black`, `mypy`, `flake8`
 
 ### Useful Resources
-- **ROS 2 Documentation**: [https://docs.ros.org/en/humble/](https://docs.ros.org/en/humble/)
+- **ROS 2 Documentation**: [Humble](https://docs.ros.org/en/humble/) / [Jazzy](https://docs.ros.org/en/jazzy/)
 - **Eclipse Foundation**: [https://www.eclipse.org/](https://www.eclipse.org/)
 - **Muto GitHub**: [https://github.com/eclipse-muto/muto](https://github.com/eclipse-muto/muto)
 - **Symphony Project**: [https://github.com/eclipse-symphony/symphony](https://github.com/eclipse-symphony/symphony)
@@ -184,7 +184,7 @@ Declarative state management with reconciliation loops:
 
 Ready to start developing? Here's your path:
 
-1. **🛠️ [Set Up Environment](./development_environment_setup.md)** - Get your development environment ready
+1. **🛠️ [Set Up Environment](./building_from_source.md)** - Get your development environment ready
 2. **🔧 [Build from Source](./building_from_source.md)** - Build and understand the codebase
 3. **🧪 [Run Tests](./debugging_and_testing.md)** - Verify your setup and run the test suite
 4. **📋 [Choose a Task](./code_contribution_guidelines.md#finding-tasks-to-work-on)** - Find something to work on

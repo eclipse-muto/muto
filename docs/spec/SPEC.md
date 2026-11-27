@@ -31,9 +31,9 @@ what the environment must provide.
 - Inter-component communication must use ROS 2 messages and services defined in the Messages package (for example, MutoAction, StackManifest, and plugin services). Source: `docs/reference/messages/readme.md`
 
 ## Deployment and environment requirements
-- Supported development platforms are Ubuntu 20.04 and 22.04 with ROS 2 installed. Source: `docs/developer_guide/readme.md`, `docs/developer_guide/building_from_source.md`
-- Running examples require ROS 2 Humble or later. Source: `docs/user_guide/running_examples.md`
-- Building from source requires Python 3.10+ and colcon, rosdep, and standard ROS 2 build tooling. Source: `docs/developer_guide/building_from_source.md`
+- Supported development platforms are Ubuntu 22.04 (ROS 2 Humble) and Ubuntu 24.04 (ROS 2 Jazzy). Source: `docs/developer_guide/readme.md`, `docs/developer_guide/building_from_source.md`
+- Running examples require ROS 2 Humble or Jazzy. Source: `docs/user_guide/running_examples.md`
+- Building from source requires Python 3.10+ (3.12 on Jazzy) and colcon, rosdep, and standard ROS 2 build tooling. Source: `docs/developer_guide/building_from_source.md`
 
 ## Quality, security, and operational requirements
 - Development must follow ROS 2 best practices, Python style guidelines, and include comprehensive type hints and documentation. Source: `docs/developer_guide/readme.md`

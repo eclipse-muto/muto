@@ -5,12 +5,7 @@ This comprehensive troubleshooting guide helps you diagnose and resolve common i
 ## Table of Contents
 - [Installation Issues](#installation-issues)
 - [Runtime Problems](#runtime-problems)
-- [Stack Deployment Issues](#stack-deployment-issues)
 - [Symphony Integration Problems](#symphony-integration-problems)
-- [Performance Issues](#performance-issues)
-- [Network and Connectivity](#network-and-connectivity)
-- [Container-Specific Issues](#container-specific-issues)
-- [Development Environment Issues](#development-environment-issues)
 
 ---
 
@@ -24,22 +19,25 @@ This comprehensive troubleshooting guide helps you diagnose and resolve common i
 ```bash
 # Check if ROS 2 is installed
 ls /opt/ros/
-# Should show 'humble' directory
+# Should show 'humble' or 'jazzy' directory
 
 # Check PATH
 echo $PATH | grep ros
 ```
 **Solutions**:
 ```bash
-# Source ROS 2 environment
-source /opt/ros/humble/setup.bash
+# Select your ROS 2 distribution: humble (Ubuntu 22.04) or jazzy (Ubuntu 24.04)
+export ROS_DISTRO=humble   # or: jazzy
 
-# Add to bashrc permanently
-echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+# Source ROS 2 environment
+source /opt/ros/$ROS_DISTRO/setup.bash
+
+# Add to bashrc permanently ($ROS_DISTRO is expanded now, so the line contains the distro name)
+echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 # If ROS 2 not installed, install it
 sudo apt update
-sudo apt install ros-humble-desktop
+sudo apt install ros-$ROS_DISTRO-desktop
 ```
 
 #### Issue: `colcon: command not found`
@@ -64,7 +62,7 @@ sudo apt update
 rosdep install --from-paths src src/muto/src/agent/muto_paho_mqtt_vendor --ignore-src -r -y
 
 # For specific packages
-sudo apt install ros-humble-demo-nodes-cpp ros-humble-demo-nodes-py
+sudo apt install ros-$ROS_DISTRO-demo-nodes-cpp ros-$ROS_DISTRO-demo-nodes-py
 ```
 
 ### Muto Build Issues
@@ -218,7 +216,7 @@ When troubleshooting doesn't resolve your issue:
 
 1. **📋 Collect Information**: Use the diagnostic scripts above
 2. **🔍 Search Issues**: Check [GitHub Issues](https://github.com/eclipse-muto/muto/issues)
-3. **💬 Community**: Ask in [GitHub Discussions](https://github.com/eclipse-muto/muto/discussions)
+3. **💬 Community**: Ask questions in [GitHub Issues](https://github.com/eclipse-muto/muto/issues)
 4. **🐛 Report Bug**: Create detailed issue with logs and reproduction steps
 5. **📖 Documentation**: Review [User Guide](./readme.md) and [Reference](../reference/readme.md)
 
@@ -228,8 +226,8 @@ When reporting issues, include:
 
 ```
 **Environment:**
-- OS: Ubuntu 22.04
-- ROS 2: Humble
+- OS: Ubuntu 22.04 / 24.04
+- ROS 2: Humble / Jazzy
 - Muto Version: [commit hash]
 - Deployment: Native/Container
 

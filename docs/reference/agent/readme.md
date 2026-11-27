@@ -2,7 +2,7 @@
 
 The **Muto Agent** is the intelligent communication bridge and orchestration coordinator that runs on each edge device. It serves as the primary gateway between cloud orchestration platforms and on-device ROS systems.
 
-**Source Code**: [`src/agent/`](../../../../src/agent/)
+**Source Code**: [`src/agent/`](../../../src/agent/)
 
 ## Architecture Overview
 
